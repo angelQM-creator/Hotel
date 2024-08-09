@@ -1,0 +1,109 @@
+package com.example.proyectofinal
+
+import android.app.ProgressDialog
+import android.content.Intent
+import android.os.Bundle
+import android.util.Log  // Importa el Log estándar de Android
+import android.view.View
+import android.widget.EditText
+import android.widget.Toast
+import androidx.activity.enableEdgeToEdge
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import com.android.volley.AuthFailureError
+import com.android.volley.DefaultRetryPolicy
+import com.android.volley.Request
+import com.android.volley.RequestQueue
+import com.android.volley.Response
+import com.android.volley.RetryPolicy
+import com.android.volley.toolbox.StringRequest
+import com.android.volley.toolbox.Volley
+
+class MainActivity2 : AppCompatActivity() {
+
+    lateinit var usuario: EditText
+    lateinit var password: EditText
+    var str_user: String = ""
+    var str_password: String = ""
+    var url = "http://192.168.1.109:8081/hotel/logear.php"
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
+        setContentView(R.layout.activity_main2)
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
+            insets
+        }
+
+        usuario = findViewById(R.id.etusuario)
+        password = findViewById(R.id.etcontraseña)
+    }
+
+    fun Login(view: View) {
+        when {
+            usuario.text.toString().isEmpty() -> {
+                Toast.makeText(this, "Enter User", Toast.LENGTH_SHORT).show()
+            }
+            password.text.toString().isEmpty() -> {
+                Toast.makeText(this, "Enter Password", Toast.LENGTH_SHORT).show()
+            }
+            else -> {
+                val progressDialog = ProgressDialog(this)
+                progressDialog.setMessage("Por favor espera...")
+                progressDialog.show()
+
+                str_user = usuario.text.toString().trim()
+                str_password = password.text.toString().trim()
+
+                val request = object : StringRequest(
+                    Request.Method.POST, url,
+                    Response.Listener<String> { response ->
+                        progressDialog.dismiss()
+
+                        // Usa android.util.Log
+                        Log.d("ServerResponse", response)
+
+                        if (response.trim().equals("ingreso", ignoreCase = true)) {
+                            usuario.setText("")
+                            password.setText("")
+                            startActivity(Intent(applicationContext, MainActivity3::class.java))
+                            Toast.makeText(this@MainActivity2, response, Toast.LENGTH_SHORT).show()
+                        } else {
+                            Toast.makeText(this@MainActivity2, response, Toast.LENGTH_SHORT).show()
+                        }
+                    },
+                    Response.ErrorListener { error ->
+                        progressDialog.dismiss()
+                        Log.e("VolleyError", error.toString())
+                        Toast.makeText(this@MainActivity2, error.message.toString(), Toast.LENGTH_SHORT).show()
+                    }) {
+                    @Throws(AuthFailureError::class)
+                    override fun getParams(): Map<String, String> {
+                        return hashMapOf(
+                            "usuario" to str_user,
+                            "password" to str_password
+                        )
+                    }
+                     override fun getRetryPolicy(): RetryPolicy {
+                        return DefaultRetryPolicy(
+                            1000, // Tiempo de espera en milisegundos
+                            DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                            DefaultRetryPolicy.DEFAULT_BACKOFF_MULT
+                        )
+                    }
+                }
+
+                val requestQueue: RequestQueue = Volley.newRequestQueue(this)
+                requestQueue.add(request)
+            }
+        }
+    }
+
+    fun moveToRegistration(view: View) {
+        startActivity(Intent(applicationContext, MainActivity::class.java))
+        finish()
+    }
+}

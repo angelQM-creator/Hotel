@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/overflowMenu"
+        android:icon="@drawable/ic_more_vert_black_24dp"
+        android:title="Tienda ABC"
+        app:showAsAction="always">
+        <menu>
+            <item
+                android:id="@+id/info"
+                android:icon="@drawable/ic_question_answer_black_24dp"
+                android:title="QUIENES SOMOS?"
+                app:showAsAction="never" />
+            <item
+                android:id="@+id/download"
+                android:icon="@drawable/baseline_map_24"
+                android:title="DOWNLOAD"
+                app:showAsAction="never" />
+
+        </menu>
+    </item>
+</menu>
