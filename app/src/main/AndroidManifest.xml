@@ -23,7 +23,7 @@
             android:name=".MainActivity3"
             android:exported="false" />
         <activity
-            android:name=".MainActivity"
+            android:name=".Presentacion"
             android:exported="true"
             android:label="@string/app_name"
             android:theme="@style/Theme.ProyectoFinal">
@@ -34,7 +34,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".MainActivity2"
+            android:name=".Logeo"
             android:exported="false" />
     </application>
 

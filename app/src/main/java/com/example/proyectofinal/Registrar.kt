@@ -58,7 +58,7 @@ class Registrar : AppCompatActivity() {
                     if (response.equals("Usuario Agregado", ignoreCase = true)) {
                         Toast.makeText(this@Registrar, "Usuario Agregado", Toast.LENGTH_SHORT).show()
                         progressDialog.dismiss()
-                        val intent = Intent(this@Registrar, MainActivity2::class.java)
+                        val intent = Intent(this@Registrar, Logeo::class.java)
                         startActivity(intent)
                     } else {
                         Toast.makeText(this@Registrar, response, Toast.LENGTH_SHORT).show()
@@ -89,7 +89,7 @@ class Registrar : AppCompatActivity() {
     }
 
     fun login(v: View) {
-        startActivity(Intent(applicationContext, MainActivity2::class.java))
+        startActivity(Intent(applicationContext, Logeo::class.java))
         finish()
     }
 

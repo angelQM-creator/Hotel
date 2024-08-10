@@ -12,15 +12,13 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.android.volley.AuthFailureError
-import com.android.volley.DefaultRetryPolicy
 import com.android.volley.Request
 import com.android.volley.RequestQueue
 import com.android.volley.Response
-import com.android.volley.RetryPolicy
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
 
-class MainActivity2 : AppCompatActivity() {
+class Logeo : AppCompatActivity() {
 
     lateinit var usuario: EditText
     lateinit var password: EditText
@@ -31,7 +29,7 @@ class MainActivity2 : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        setContentView(R.layout.activity_main2)
+        setContentView(R.layout.activity_logeo)
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
@@ -70,15 +68,15 @@ class MainActivity2 : AppCompatActivity() {
                             usuario.setText("")
                             password.setText("")
                             startActivity(Intent(applicationContext, MainActivity3::class.java))
-                            Toast.makeText(this@MainActivity2, response, Toast.LENGTH_SHORT).show()
+                            Toast.makeText(this@Logeo, response, Toast.LENGTH_SHORT).show()
                         } else {
-                            Toast.makeText(this@MainActivity2, response, Toast.LENGTH_SHORT).show()
+                            Toast.makeText(this@Logeo, response, Toast.LENGTH_SHORT).show()
                         }
                     },
                     Response.ErrorListener { error ->
                         progressDialog.dismiss()
                         Log.e("VolleyError", error.toString())
-                        Toast.makeText(this@MainActivity2, error.message.toString(), Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this@Logeo, error.message.toString(), Toast.LENGTH_SHORT).show()
                     }) {
                     @Throws(AuthFailureError::class)
                     override fun getParams(): Map<String, String> {
