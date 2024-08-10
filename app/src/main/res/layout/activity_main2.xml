@@ -34,7 +34,7 @@
             android:id="@+id/textView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Bienvendo"
+            android:text="Bienvenido"
             android:textColor="@android:color/black"
             android:textSize="28sp"
             android:textStyle="bold"

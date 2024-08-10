@@ -26,7 +26,7 @@ class MainActivity2 : AppCompatActivity() {
     lateinit var password: EditText
     var str_user: String = ""
     var str_password: String = ""
-    var url = "http://192.168.1.109:8081/hotel/logear.php"
+    var url = "https://transportetresdiamantes.com/config_hotel/logear.php"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -87,13 +87,6 @@ class MainActivity2 : AppCompatActivity() {
                             "password" to str_password
                         )
                     }
-                     override fun getRetryPolicy(): RetryPolicy {
-                        return DefaultRetryPolicy(
-                            1000, // Tiempo de espera en milisegundos
-                            DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
-                            DefaultRetryPolicy.DEFAULT_BACKOFF_MULT
-                        )
-                    }
                 }
 
                 val requestQueue: RequestQueue = Volley.newRequestQueue(this)
@@ -103,7 +96,7 @@ class MainActivity2 : AppCompatActivity() {
     }
 
     fun moveToRegistration(view: View) {
-        startActivity(Intent(applicationContext, MainActivity::class.java))
+        startActivity(Intent(applicationContext, Registrar::class.java))
         finish()
     }
 }
