@@ -15,6 +15,7 @@
       android:layout_height="wrap_content"
       android:layout_marginStart="25dp"
       android:layout_marginEnd="25dp"
+      android:layout_marginTop="130dp"
       android:elevation="4dp"
       app:cardBackgroundColor="#CEFFFFFF"
       app:cardCornerRadius="10dp"
@@ -26,18 +27,34 @@
         android:layout_height="match_parent"
         android:layout_margin="15dp"
         android:orientation="vertical">
-
-      <Button
-          android:id="@+id/btn_login"
+      <RelativeLayout
           android:layout_width="match_parent"
+          android:layout_height="wrap_content">
+
+      <TextView
+          android:id="@+id/textView"
+          android:layout_width="wrap_content"
           android:layout_height="wrap_content"
-          android:layout_marginTop="32dp"
-          android:background="@drawable/button"
-          android:backgroundTint="@null"
-          android:onClick="Login"
-          android:text="Ingresar"
-          android:textColor="@android:color/white"
-          android:textSize="20dp" />
+          android:text="Bienvenido"
+          android:textColor="@android:color/black"
+          android:textSize="28sp"
+          android:textStyle="bold"
+
+
+          />
+
+      <TextView
+          android:id="@+id/txtsignup"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_alignParentRight="true"
+          android:layout_marginTop="4dp"
+          android:onClick="moveToRegistration"
+          android:text="Registrate"
+          android:textColor="@color/colorPrimary"
+          android:textSize="20sp"
+          android:textStyle="bold" />
+      </RelativeLayout>
 
 
       <EditText
@@ -45,9 +62,9 @@
           android:layout_width="match_parent"
           android:layout_height="42dp"
           android:layout_marginTop="20dp"
-          android:background="@drawable/textverde"
+          android:background="@drawable/textazul"
           android:ems="10"
-          android:hint="Password"
+          android:hint="Contraseña"
           android:inputType="textPassword"
           android:padding="5dp" />
 
@@ -57,42 +74,25 @@
           android:layout_width="match_parent"
           android:layout_height="40dp"
           android:layout_marginTop="20dp"
-          android:background="@drawable/textverde"
+          android:background="@drawable/textazul"
           android:ems="10"
           android:hint="Usuario"
           android:padding="5dp"
 
           />
 
-
-      <RelativeLayout
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content">
-
-        <TextView
-            android:id="@+id/textView"
-            android:layout_width="wrap_content"
+        <Button
+            android:id="@+id/btn_login"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Bienvenido"
-            android:textColor="@android:color/black"
-            android:textSize="28sp"
-            android:textStyle="bold"
+            android:layout_marginTop="32dp"
+            android:background="@drawable/button"
+            android:backgroundTint="@null"
+            android:onClick="Login"
+            android:text="Ingresar"
+            android:textColor="@android:color/white"
+            android:textSize="20dp" />
 
-
-            />
-
-        <TextView
-            android:id="@+id/txtsignup"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_marginTop="4dp"
-            android:onClick="moveToRegistration"
-            android:text="Registrate"
-            android:textColor="@color/colorPrimary"
-            android:textSize="20sp"
-            android:textStyle="bold" />
-      </RelativeLayout>
 
     </LinearLayout>
   </androidx.cardview.widget.CardView>
