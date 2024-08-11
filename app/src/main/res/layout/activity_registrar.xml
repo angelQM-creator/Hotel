@@ -5,61 +5,55 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
+    android:background="@drawable/fondolog"
     android:gravity="center"
-    android:background="#9C27B0"
+    android:orientation="vertical"
     tools:context=".Registrar">
 
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
         android:layout_marginStart="25dp"
-        app:cardCornerRadius="10dp"
+        android:layout_marginTop="10dp"
         android:layout_marginEnd="25dp"
         android:layout_marginBottom="35dp"
-        app:cardUseCompatPadding="true"
+        android:background="#CEFFFFFF"
         android:elevation="4dp"
-        >
+        app:cardCornerRadius="10dp"
+        app:cardUseCompatPadding="true">
+
         <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:background="#D0FFFFFF">
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:orientation="vertical"
                 android:layout_margin="15dp"
-                >
-                <RelativeLayout
+                android:background="#C9FFFFFF"
+                android:orientation="vertical">
+
+                <Button
+                    android:id="@+id/btn_register"
+
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    >
-
-                    <TextView
-                        android:id="@+id/textView"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Registrate"
-                        android:textSize="28sp"
-                        android:textStyle="bold"
-                        android:textColor="@android:color/black"
+                    android:layout_height="40dp"
+                    android:layout_marginTop="32dp"
+                    android:background="@drawable/button"
+                    android:text="Registrate"
+                    android:textColor="@android:color/white"
 
 
-                        />
-                    <TextView
-                        android:id="@+id/txtsignup"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Login"
-                        android:textSize="20sp"
-                        android:textStyle="bold"
-                        android:textColor="@color/colorPrimary"
-                        android:layout_alignParentRight="true"
-                        android:layout_marginTop="4dp"
-                        android:onClick="login"
+                    android:textSize="15dp" />
 
-                        />
-                </RelativeLayout>
+
+                <Button
+                    android:layout_width="match_parent"
+                    android:layout_height="30dp"
+                    android:visibility="invisible">
+
+                </Button>
 
 
                 <EditText
@@ -73,53 +67,50 @@
                     android:padding="10dp" />
 
 
-
-
-
-
-
-
-
                 <EditText
                     android:id="@+id/etcontraseña"
                     android:layout_width="match_parent"
                     android:layout_height="40dp"
-                    android:ems="10"
-                    android:background="@drawable/textverde"
-                    android:hint="Password"
                     android:layout_marginTop="20dp"
-                    android:padding="10dp"
-                    android:inputType="textPassword" />
+                    android:background="@drawable/textverde"
+                    android:ems="10"
+                    android:hint="Password"
+                    android:inputType="textPassword"
+                    android:padding="10dp" />
 
-
-
-
-
-
-                <Button
-                    android:id="@+id/btn_register"
-
+                <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="40dp"
-                    android:textColor="@android:color/white"
-                    android:textSize="15dp"
-                    android:background="@drawable/button"
-                    android:layout_marginTop="32dp"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:id="@+id/textView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Registrate"
+                        android:textColor="@android:color/black"
+                        android:textSize="28sp"
+                        android:textStyle="bold"
 
 
-                    android:text="Registrate"
-                    />
-                <Button
-                    android:layout_width="match_parent"
-                    android:visibility="invisible"
-                    android:layout_height="30dp">
+                        />
 
-                </Button>
+                    <TextView
+                        android:id="@+id/txtsignup"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_marginTop="4dp"
+                        android:onClick="login"
+                        android:text="Login"
+                        android:textColor="@color/colorPrimary"
+                        android:textSize="20sp"
+                        android:textStyle="bold"
+
+                        />
+                </RelativeLayout>
 
             </LinearLayout>
         </ScrollView>
-
-
 
 
     </androidx.cardview.widget.CardView>

@@ -3,18 +3,28 @@
     <item
         android:id="@+id/overflowMenu"
         android:icon="@drawable/ic_more_vert_black_24dp"
-        android:title="Tienda ABC"
+        android:title="BORCELLE"
         app:showAsAction="always">
         <menu>
             <item
-                android:id="@+id/info"
+                android:id="@+id/ubicacion"
                 android:icon="@drawable/ic_question_answer_black_24dp"
-                android:title="QUIENES SOMOS?"
+                android:title="Ubicación"
                 app:showAsAction="never" />
             <item
-                android:id="@+id/download"
+                android:id="@+id/login"
                 android:icon="@drawable/baseline_map_24"
-                android:title="DOWNLOAD"
+                android:title="Login"
+                app:showAsAction="never" />
+            <item
+                android:id="@+id/alojamiento"
+                android:icon="@drawable/ic_question_answer_black_24dp"
+                android:title="Alojamiento"
+                app:showAsAction="never" />
+            <item
+                android:id="@+id/reservacion"
+                android:icon="@drawable/ic_question_answer_black_24dp"
+                android:title="Reservación"
                 app:showAsAction="never" />
 
         </menu>

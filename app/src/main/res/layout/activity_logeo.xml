@@ -4,19 +4,20 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
-    android:orientation="vertical"
-    android:background="#9C27B0"
-    android:gravity="center"
     android:layout_height="match_parent"
+    android:background="@drawable/fondolog"
+    android:gravity="center"
+    android:orientation="vertical"
     tools:context=".Logeo">
 
   <androidx.cardview.widget.CardView
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      app:cardCornerRadius="10dp"
-      android:layout_marginEnd="25dp"
       android:layout_marginStart="25dp"
+      android:layout_marginEnd="25dp"
       android:elevation="4dp"
+      app:cardBackgroundColor="#CEFFFFFF"
+      app:cardCornerRadius="10dp"
       app:cardUseCompatPadding="true">
 
 
@@ -25,6 +26,44 @@
         android:layout_height="match_parent"
         android:layout_margin="15dp"
         android:orientation="vertical">
+
+      <Button
+          android:id="@+id/btn_login"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:layout_marginTop="32dp"
+          android:background="@drawable/button"
+          android:backgroundTint="@null"
+          android:onClick="Login"
+          android:text="Ingresar"
+          android:textColor="@android:color/white"
+          android:textSize="20dp" />
+
+
+      <EditText
+          android:id="@+id/etcontraseña"
+          android:layout_width="match_parent"
+          android:layout_height="42dp"
+          android:layout_marginTop="20dp"
+          android:background="@drawable/textverde"
+          android:ems="10"
+          android:hint="Password"
+          android:inputType="textPassword"
+          android:padding="5dp" />
+
+
+      <EditText
+          android:id="@+id/etusuario"
+          android:layout_width="match_parent"
+          android:layout_height="40dp"
+          android:layout_marginTop="20dp"
+          android:background="@drawable/textverde"
+          android:ems="10"
+          android:hint="Usuario"
+          android:padding="5dp"
+
+          />
+
 
       <RelativeLayout
           android:layout_width="match_parent"
@@ -54,47 +93,6 @@
             android:textSize="20sp"
             android:textStyle="bold" />
       </RelativeLayout>
-
-
-      <EditText
-          android:id="@+id/etusuario"
-          android:layout_width="match_parent"
-          android:layout_height="40dp"
-          android:layout_marginTop="20dp"
-          android:background="@drawable/textverde"
-          android:ems="10"
-          android:hint="Usuario"
-          android:padding="5dp"
-
-          />
-
-
-
-
-      <EditText
-          android:id="@+id/etcontraseña"
-          android:layout_width="match_parent"
-          android:layout_height="42dp"
-          android:ems="10"
-          android:layout_marginTop="20dp"
-          android:padding="5dp"
-          android:background="@drawable/textverde"
-          android:hint="Password"
-          android:inputType="textPassword" />
-
-
-
-      <Button
-          android:id="@+id/btn_login"
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          android:layout_marginTop="32dp"
-          android:backgroundTint="@null"
-          android:background="@drawable/button"
-          android:onClick="Login"
-          android:text="Ingresar"
-          android:textColor="@android:color/white"
-          android:textSize="20dp" />
 
     </LinearLayout>
   </androidx.cardview.widget.CardView>
