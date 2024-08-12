@@ -68,7 +68,6 @@
           android:inputType="textPassword"
           android:padding="5dp" />
 
-
       <EditText
           android:id="@+id/etusuario"
           android:layout_width="match_parent"
@@ -81,7 +80,7 @@
 
           />
 
-        <Button
+      <Button
             android:id="@+id/btn_login"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
