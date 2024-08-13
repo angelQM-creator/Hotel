@@ -67,7 +67,7 @@ class Logeo : AppCompatActivity() {
                         if (response.trim().equals("ingreso", ignoreCase = true)) {
                             usuario.setText("")
                             password.setText("")
-                            startActivity(Intent(applicationContext, MainActivity3::class.java))
+                            startActivity(Intent(applicationContext, Oferta::class.java))
                             Toast.makeText(this@Logeo, response, Toast.LENGTH_SHORT).show()
                         } else {
                             Toast.makeText(this@Logeo, response, Toast.LENGTH_SHORT).show()

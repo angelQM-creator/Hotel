@@ -30,7 +30,7 @@ class Presentacion : AppCompatActivity() {
         btnContinuar = findViewById(R.id.btnContinuar)
 
         btnContinuar.setOnClickListener{
-            val intento1 = Intent(this, Logeo::class.java)
+            val intento1 = Intent(this, QuienesSomos::class.java)
             startActivity(intento1)
         }
 

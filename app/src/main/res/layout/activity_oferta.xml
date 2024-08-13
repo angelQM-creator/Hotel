@@ -5,4 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity5" />
+    android:background="@drawable/fondo5"
+    tools:context=".Oferta">
+
+</androidx.constraintlayout.widget.ConstraintLayout>
