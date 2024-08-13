@@ -4,35 +4,35 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
-import android.widget.Toast
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 
 class QuienesSomos : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
         setContentView(R.layout.activity_quienessomos)
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+
+        val toolbar: Toolbar = findViewById(R.id.toolbar)
+        setSupportActionBar(toolbar)
+        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.menu, menu)
-        return true  // Asegúrate de que devuelve true
+        menuInflater.inflate(R.menu.option_menu_first, menu)
+        return true
     }
 
-
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId){
-            //R.id.about -> Toast.makeText(this,"Bienveidos al APP",Toast.LENGTH_SHORT).show()
+        when (item.itemId) {
+            R.id.ubicacion -> ubicacion()
             R.id.login -> login()
-            R.id.ubicacion -> Toast.makeText(this,"Escribenos al Whatsapp",Toast.LENGTH_SHORT).show()
         }
         return super.onOptionsItemSelected(item)
     }
@@ -42,4 +42,8 @@ class QuienesSomos : AppCompatActivity() {
         startActivity(intento1)
     }
 
+    fun ubicacion() {
+        val intento1 = Intent(this, Logeo::class.java)
+        startActivity(intento1)
+    }
 }
