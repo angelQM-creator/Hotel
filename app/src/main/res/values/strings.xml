@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">BORCELLE</string>
+    <string name="alojamiento">ALOJAMIENTO</string>
+    <string name="reservacion">RESERVACION</string>
+    <string name="oferta">OFERTAS</string>
+    <string name="ubicacion">UBICACION</string>
+    <string name="quienesS">QUIENES SOMOS</string>
 </resources>

@@ -21,9 +21,12 @@ class Oferta : AppCompatActivity() {
             insets
         }
 
-        val toolbar: Toolbar = findViewById(R.id.toolbarOferta)
+        val toolbar: Toolbar = findViewById(R.id.toolbarO)
         setSupportActionBar(toolbar)
-        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.apply {
+            setDisplayHomeAsUpEnabled(true)
+            setHomeAsUpIndicator(R.drawable.baseline_arrow_back_24_white) // Usa el drawable con el color cambiado
+        }
 
     }
 
