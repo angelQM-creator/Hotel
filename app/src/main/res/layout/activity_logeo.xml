@@ -51,7 +51,7 @@
           android:layout_marginTop="4dp"
           android:onClick="moveToRegistration"
           android:text="Registrate"
-          android:textColor="@color/colorPrimary"
+          android:textColor="@color/colorPrimaryDark"
           android:textSize="20sp"
           android:textStyle="bold" />
       </RelativeLayout>

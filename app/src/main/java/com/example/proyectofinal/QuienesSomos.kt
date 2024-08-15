@@ -46,7 +46,7 @@ class QuienesSomos : AppCompatActivity() {
     }
 
     fun ubicacion() {
-        val intento1 = Intent(this, Logeo::class.java)
+        val intento1 = Intent(this, MapsActivity::class.java)
         startActivity(intento1)
     }
 }
