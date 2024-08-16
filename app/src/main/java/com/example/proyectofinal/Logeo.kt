@@ -2,11 +2,13 @@ package com.example.proyectofinal
 
 import android.app.ProgressDialog
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log  // Importa el Log estándar de Android
 import android.view.View
 import android.widget.EditText
 import android.widget.Toast
+import android.widget.VideoView
 import androidx.appcompat.widget.Toolbar
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -36,6 +38,11 @@ class Logeo : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+
+        val videoView: VideoView = findViewById(R.id.videoBackground)
+        val videoUri: Uri = Uri.parse("android.resource://" + packageName + "/" + R.raw.fondohotel)
+        videoView.setVideoURI(videoUri)
+        videoView.start()
 
         usuario = findViewById(R.id.etusuario)
         password = findViewById(R.id.etcontraseña)
