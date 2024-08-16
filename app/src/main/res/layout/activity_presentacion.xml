@@ -5,36 +5,66 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/fondo"
-    tools:context=".Presentacion" >
+    android:background="@drawable/fnd1"
+    tools:context=".Presentacion">
+
+
+    <ImageView
+        android:id="@+id/imageView2"
+        android:layout_width="238dp"
+        android:layout_height="95dp"
+        android:scaleType="centerCrop"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0"
+        app:srcCompat="@drawable/boton" />
 
     <Button
         android:id="@+id/btnContinuar"
-        android:layout_width="110dp"
-        android:layout_height="50dp"
-        android:background="#BF4B5A61"
-        android:backgroundTint="#FFFFFF"
-        android:text="CONTINUAR"
+        android:layout_width="241dp"
+        android:layout_height="54dp"
+        android:background="#00FFFFFF"
+        android:text="Conócenos"
+        android:textColor="#FFFFFF"
+        android:textSize="18sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.88"
+        app:layout_constraintHorizontal_bias="0.364"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.901" />
+        app:layout_constraintVertical_bias="0.96" />
 
-    <Button
-        android:id="@+id/btnCerrar"
-        android:layout_width="110dp"
-        android:layout_height="50dp"
-        android:background="#BF4B5A61"
-        android:backgroundTint="#FFFFFF"
-        android:text="CERRAR"
-        android:textStyle="bold"
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="227dp"
+        android:layout_height="174dp"
+        android:scaleType="centerInside"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.132"
+        app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.901" />
+        app:layout_constraintVertical_bias="0.635"
+        app:srcCompat="@drawable/logo1" />
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="330dp"
+        android:layout_height="57dp"
+        android:gravity="center"
+        android:text="HABITACIONES CÓMODAS, INSTALACIONES MODERNAS, HOSPITALIDAD ÚNICA"
+        android:textColor="#FFFFFF"
+        android:textSize="16sp"
+
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.493"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.824" />
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>

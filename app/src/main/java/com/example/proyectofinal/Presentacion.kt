@@ -12,7 +12,6 @@ import androidx.core.view.WindowInsetsCompat
 
 class Presentacion : AppCompatActivity() {
 
-    lateinit var btnCerrar: Button
     lateinit var btnContinuar: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -25,8 +24,6 @@ class Presentacion : AppCompatActivity() {
             insets
         }
 
-
-        btnCerrar = findViewById(R.id.btnCerrar)
         btnContinuar = findViewById(R.id.btnContinuar)
 
         btnContinuar.setOnClickListener{
@@ -34,31 +31,7 @@ class Presentacion : AppCompatActivity() {
             startActivity(intento1)
         }
 
-        btnCerrar.setOnClickListener {
-            cerrar()
-        }
 
     }
-
-    fun cerrar(){
-        val builder: AlertDialog.Builder = AlertDialog.Builder(this)
-        builder
-            .setMessage("Fin de la APP!!")
-            .setTitle("CERRAR APP")
-            .setPositiveButton(android.R.string.yes) { dialog, which ->
-                Toast.makeText(applicationContext, "Cerrando la aplicación", Toast.LENGTH_SHORT).show()
-                System.exit(0) // Asegura que la aplicación se cierra completamente
-            }
-            .setNegativeButton(android.R.string.no) { dialog, which ->
-                Toast.makeText(applicationContext, "La aplicación continuará", Toast.LENGTH_SHORT).show()
-                dialog.dismiss() // Cierra el diálogo sin cerrar la app
-            }
-
-        val dialog: AlertDialog = builder.create()
-        dialog.show()
-    }
-
-
-
 
 }

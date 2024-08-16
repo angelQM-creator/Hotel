@@ -4,19 +4,21 @@
 
     <item
         android:id="@+id/overflowMenu"
-        android:icon="@drawable/baseline_more_vert_24_orange"
+        android:icon="@drawable/baseline_dehaze_24"
         android:title="BORCELLE"
         app:showAsAction="always">
         <menu>
-            <item android:id="@+id/alojamiento"
+            <item
+                android:id="@+id/alojamiento"
                 android:icon="@drawable/baseline_hotel_24"
                 android:title="ALOJAMIENTO"
-                app:showAsAction="never"/>
+                app:showAsAction="never" />
 
-            <item android:id="@+id/reservacion"
+            <item
+                android:id="@+id/reservacion"
                 android:icon="@drawable/baseline_hotel_24"
                 android:title="RESERVACION"
-                app:showAsAction="never"/>
+                app:showAsAction="never" />
         </menu>
     </item>
 

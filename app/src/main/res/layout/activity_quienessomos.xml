@@ -5,10 +5,44 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/fondo6"
+    android:background="@drawable/fnd2"
     tools:context=".QuienesSomos">
 
-    <com.google.android.material.appbar.AppBarLayout android:layout_width="match_parent"
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="sans-serif-thin"
+        android:text="¿QUIENES SOMOS?"
+        android:textAlignment="center"
+        android:textColor="#000000"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.497"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.634" />
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="351dp"
+        android:layout_height="176dp"
+        android:fontFamily="sans-serif-thin"
+        android:gravity="center"
+        android:text="Nuestro hotel, ubicado en el corazón de Ica, es un refugio moderno con un toque de calidez tradicional. Nos enorgullecemos de brindar un servicio excepcional, donde cada detalle cuenta. Ya sea que estés aquí por negocios o placer, en BORCELLE encontrarás el lugar perfecto para relajarte y disfrutar. ¡Bienvenido a una experiencia única!"
+        android:textColor="#000000"
+
+        android:textSize="15sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.825" />
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         tools:ignore="MissingConstraints">
 
@@ -17,7 +51,7 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
-            app:layout_scrollFlags="enterAlways|scroll"/>
+            app:layout_scrollFlags="enterAlways|scroll" />
 
     </com.google.android.material.appbar.AppBarLayout>
 

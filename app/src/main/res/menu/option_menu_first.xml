@@ -4,7 +4,7 @@
 
     <item
         android:id="@+id/overflowMenu"
-        android:icon="@drawable/baseline_more_vert_24_orange"
+        android:icon="@drawable/baseline_dehaze_24"
         android:title="BORCELLE"
         app:showAsAction="always">
         <menu>
