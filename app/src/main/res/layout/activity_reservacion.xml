@@ -198,7 +198,7 @@
         app:layout_constraintVertical_bias="0.667" />
 
     <EditText
-        android:id="@+id/txt6"
+        android:id="@+id/txtnumerop"
         android:layout_width="178dp"
         android:layout_height="23dp"
         android:background="#79FFFFFF"
@@ -217,7 +217,7 @@
         app:layout_constraintVertical_bias="0.721" />
 
     <Spinner
-        android:id="@+id/spinner2"
+        android:id="@+id/spinnerpago"
         android:layout_width="177dp"
         android:layout_height="24dp"
         android:background="#79FFFFFF"
@@ -246,7 +246,7 @@
         app:layout_constraintVertical_bias="0.609" />
 
     <EditText
-        android:id="@+id/txt7"
+        android:id="@+id/txtacompañantes"
         android:layout_width="178dp"
         android:layout_height="23dp"
         android:background="#79FFFFFF"
@@ -333,7 +333,7 @@
         app:layout_constraintVertical_bias="0.269" />
 
     <EditText
-        android:id="@+id/txt4"
+        android:id="@+id/txttiempo"
         android:layout_width="178dp"
         android:layout_height="23dp"
         android:background="#79FFFFFF"
@@ -349,24 +349,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.384" />
-
-    <EditText
-        android:id="@+id/txt5"
-        android:layout_width="178dp"
-        android:layout_height="23dp"
-        android:background="#79FFFFFF"
-        android:ems="10"
-        android:fontFamily="monospace"
-        android:inputType="text"
-        android:textColor="#000000"
-        android:textSize="14sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.931"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.55" />
 
     <EditText
         android:id="@+id/txttelefono"
@@ -387,7 +369,7 @@
         app:layout_constraintVertical_bias="0.214" />
 
     <Spinner
-        android:id="@+id/spinner3"
+        android:id="@+id/spinnertipoh"
         android:layout_width="177dp"
         android:layout_height="24dp"
         android:background="#79FFFFFF"
@@ -399,7 +381,19 @@
         app:layout_constraintVertical_bias="0.438" />
 
     <Spinner
-        android:id="@+id/spinner"
+        android:id="@+id/spinnertipoc"
+        android:layout_width="177dp"
+        android:layout_height="24dp"
+        android:background="#79FFFFFF"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.935"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.553" />
+
+    <Spinner
+        android:id="@+id/spinnernumeroh"
         android:layout_width="177dp"
         android:layout_height="24dp"
         android:background="#79FFFFFF"
