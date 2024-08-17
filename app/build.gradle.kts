@@ -30,6 +30,14 @@ android {
             )
         }
     }
+    configurations.all {
+        resolutionStrategy {
+            force("com.google.android.material:material:1.10.0")
+            force("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
+            force("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
+            // Agrega más reglas si es necesario
+        }
+    }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
@@ -52,13 +60,24 @@ android {
 }
 
 dependencies {
-    implementation ("androidx.cardview:cardview:1.0.0")
-    implementation ("com.google.android.material:material:1.0.0")
-    implementation ("com.android.volley:volley:1.2.1")
-    implementation ("androidx.appcompat:appcompat:1.6.1")
-    implementation ("com.google.android.material:material:1.10.0")
+//    implementation ("androidx.cardview:cardview:1.0.0")
+//    implementation ("com.google.android.material:material:1.0.0")
+//    implementation ("com.android.volley:volley:1.2.1")
+//    implementation ("androidx.appcompat:appcompat:1.6.1")
+//    implementation ("com.google.android.material:material:1.10.0")
+//    implementation ("org.jsoup:jsoup:1.15.3")
+//    implementation ("com.google.android.gms:play-services-maps:17.0.0")
+//    implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3") // Reemplaza con la última versión
+//    implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
+    implementation("androidx.cardview:cardview:1.0.0")
+    implementation("com.google.android.material:material:1.10.0") // Mantén solo una versión
+    implementation("com.android.volley:volley:1.2.1")
+    implementation("androidx.appcompat:appcompat:1.6.1")
     implementation("org.jsoup:jsoup:1.15.3")
-    implementation ("com.google.android.gms:play-services-maps:17.0.0")
+    implementation("com.google.android.gms:play-services-maps:17.0.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
+    implementation("com.google.code.gson:gson:2.10.1")
 
 
     implementation(libs.androidx.core.ktx)

@@ -61,8 +61,8 @@ class Logeo : AppCompatActivity() {
                 progressDialog.setMessage("Por favor espera...")
                 progressDialog.show()
 
-                str_user = usuario.text.toString().trim()
-                str_password = password.text.toString().trim()
+                str_user = usuario.text.toString()
+                str_password = password.text.toString()
 
                 val request = object : StringRequest(
                     Request.Method.POST, url,
@@ -72,7 +72,7 @@ class Logeo : AppCompatActivity() {
                         // Usa android.util.Log
                         Log.d("ServerResponse", response)
 
-                        if (response.trim().equals("ingreso", ignoreCase = true)) {
+                        if (response.equals("ingreso", ignoreCase = true)) {
                             usuario.setText("")
                             password.setText("")
                             startActivity(Intent(applicationContext, Oferta::class.java))
