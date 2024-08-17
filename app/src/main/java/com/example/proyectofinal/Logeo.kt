@@ -40,12 +40,18 @@ class Logeo : AppCompatActivity() {
         }
 
         val videoView: VideoView = findViewById(R.id.videoBackground)
-        val videoUri: Uri = Uri.parse("android.resource://" + packageName + "/" + R.raw.fondohotel)
+        val videoUri: Uri = Uri.parse("android.resource://" + packageName + "/" + R.raw.loginv)
         videoView.setVideoURI(videoUri)
         videoView.start()
 
+        videoView.setOnPreparedListener { mp ->
+            mp.isLooping = true// Para que el video se repita en bucle
+        }
+
         usuario = findViewById(R.id.etusuario)
         password = findViewById(R.id.etcontraseña)
+
+
     }
 
     fun Login(view: View) {

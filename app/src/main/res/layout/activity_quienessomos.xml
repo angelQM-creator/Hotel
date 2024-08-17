@@ -23,23 +23,24 @@
         app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.634" />
+        app:layout_constraintVertical_bias="0.644" />
 
     <TextView
         android:id="@+id/textView2"
-        android:layout_width="351dp"
-        android:layout_height="176dp"
+        android:layout_width="348dp"
+        android:layout_height="184dp"
         android:fontFamily="sans-serif-thin"
         android:gravity="center"
-        android:text="Nuestro hotel, ubicado en el corazón de Ica, es un refugio moderno con un toque de calidez tradicional. Nos enorgullecemos de brindar un servicio excepcional, donde cada detalle cuenta. Ya sea que estés aquí por negocios o placer, en BORCELLE encontrarás el lugar perfecto para relajarte y disfrutar. ¡Bienvenido a una experiencia única!"
+        android:text="En BORCELLE, combinamos lujo y confort para ofrecerte una experiencia inolvidable. Nuestro hotel, ubicado en el corazón de Ica, es un refugio moderno con un toque de calidez tradicional. Nos enorgullecemos de brindar un servicio excepcional, donde cada detalle cuenta. Ya sea que estés aquí por negocios o placer, en BORCELLE encontrarás el lugar perfecto para relajarte y disfrutar. "
         android:textColor="#000000"
 
         android:textSize="15sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.507"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.825" />
+        app:layout_constraintVertical_bias="0.879" />
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
@@ -54,5 +55,20 @@
             app:layout_scrollFlags="enterAlways|scroll" />
 
     </com.google.android.material.appbar.AppBarLayout>
+
+    <TextView
+        android:id="@+id/textView4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="sans-serif-thin"
+        android:text="¡Bienvenido a una experiencia única!"
+        android:textColor="#000000"
+        android:textSize="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.496"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.922" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

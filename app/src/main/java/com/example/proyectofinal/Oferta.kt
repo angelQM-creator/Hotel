@@ -1,9 +1,11 @@
 package com.example.proyectofinal
 
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.VideoView
 import androidx.appcompat.widget.Toolbar
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -19,6 +21,15 @@ class Oferta : AppCompatActivity() {
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
+        }
+
+        val videoView: VideoView = findViewById(R.id.videoBackground)
+        val videoUri: Uri = Uri.parse("android.resource://" + packageName + "/" + R.raw.fndofv)
+        videoView.setVideoURI(videoUri)
+        videoView.start()
+
+        videoView.setOnPreparedListener { mp ->
+            mp.isLooping = true// Para que el video se repita en bucle
         }
 
         val toolbar: Toolbar = findViewById(R.id.toolbarO)
