@@ -1,6 +1,8 @@
 package com.example.proyectofinal
 
+import android.net.Uri
 import android.os.Bundle
+import android.widget.VideoView
 import androidx.appcompat.widget.Toolbar
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -17,6 +19,8 @@ class Reservacion : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+
+
 
         val toolbar: Toolbar = findViewById(R.id.toolbarR)
         setSupportActionBar(toolbar)
