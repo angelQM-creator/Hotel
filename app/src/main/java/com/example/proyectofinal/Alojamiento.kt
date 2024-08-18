@@ -5,13 +5,18 @@ import android.app.DatePickerDialog.OnDateSetListener
 import android.app.Dialog
 import android.app.ProgressDialog
 import android.app.TimePickerDialog
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
 import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.LinearLayout
+import android.widget.Spinner
 import android.widget.TextView
 import android.widget.TimePicker
 import android.widget.Toast
@@ -25,6 +30,7 @@ import com.android.volley.AuthFailureError
 import com.android.volley.Request
 import com.android.volley.RequestQueue
 import com.android.volley.Response
+import com.android.volley.toolbox.JsonArrayRequest
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
 import com.google.gson.Gson
@@ -41,6 +47,16 @@ class Alojamiento : AppCompatActivity() {
     lateinit var etFF: EditText
     lateinit var etHI: EditText
     lateinit var etHF: EditText
+    private lateinit var requestQueue: RequestQueue
+    /*********************************************/
+    lateinit var sp_th: Spinner
+    private lateinit var tipoHabitacionList: List<TipoHabitacion>
+    var id_th: String = ""
+
+    lateinit var sp_h: Spinner
+    private lateinit var habitacionList: List<Habitacion>
+    var id_h: String = ""
+    /*********************************************/
 
     lateinit var imgConsulta: ImageButton
     var str_dni: String = ""
@@ -50,7 +66,6 @@ class Alojamiento : AppCompatActivity() {
     lateinit var tv_nombre_app: TextView
     lateinit var tv_apellido_app: TextView
     lateinit var edt_dni_app: EditText
-
     /*********************************************/
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -78,6 +93,9 @@ class Alojamiento : AppCompatActivity() {
         etHI = findViewById(R.id.etHI)
         etHF = findViewById(R.id.etHF)
         imgConsulta = findViewById(R.id.imgConsulta)
+        sp_th = findViewById(R.id.sTH)
+        sp_h = findViewById(R.id.sH)
+        requestQueue = Volley.newRequestQueue(this)
         imgConsulta.setOnClickListener() {
             try {
                 if (edt_cant_inquilinos_.text.toString() == "") {
@@ -96,7 +114,7 @@ class Alojamiento : AppCompatActivity() {
         getCalendarioLibre(etFF);
         gettime(etHI);
         gettime(etHF);
-
+        cargar_list_th();
 
     }
 
@@ -217,6 +235,122 @@ class Alojamiento : AppCompatActivity() {
                 fragment.setListener(listener)
                 return fragment
             }
+        }
+    }
+
+    fun cargar_list_th()
+    {
+        val url = "https://transportetresdiamantes.com/config_hotel/listar_combo_tipo_habitacion.php"
+
+        val jsonArrayRequest = JsonArrayRequest(
+            Request.Method.GET, url, null,
+            Response.Listener { response ->
+                val dataList = ArrayList<TipoHabitacion>()
+                for (i in 0 until response.length()) {
+                    val jsonObject = response.getJSONObject(i)
+                    val idTH = jsonObject.getString("idTH")
+                    val descripcionTH = jsonObject.getString("descripcionTH")
+                    dataList.add(TipoHabitacion(idTH, descripcionTH))
+                }
+                tipoHabitacionList = dataList
+
+                // Configurar el adaptador del Spinner
+                val adapter = TipoHabitacionAdapter(this, R.layout.spinner_item, dataList)
+                sp_th.adapter = adapter
+            },
+            Response.ErrorListener { error ->
+                error.printStackTrace()
+            }
+        )
+
+        requestQueue.add(jsonArrayRequest)
+
+        // Configurar el listener para obtener el ID del ítem seleccionado
+        sp_th.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                val selectedItem = tipoHabitacionList[position]
+                id_th = selectedItem.idTH
+                cargar_list_h(id_th);
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+                // No hacer nada si no se selecciona ningún ítem
+            }
+        }
+    }
+
+    fun cargar_list_h(idTH: String) {
+        val url = "https://transportetresdiamantes.com/config_hotel/listar_detalles.php?idTH=$idTH"
+
+        val jsonArrayRequest = JsonArrayRequest(
+            Request.Method.GET, url, null,
+            Response.Listener { response ->
+                val detallesList = ArrayList<Habitacion>()
+                for (i in 0 until response.length()) {
+                    val jsonObject = response.getJSONObject(i)
+                    val idH = jsonObject.getString("idH")
+                    val descripcionH = jsonObject.getString("descripcionH")
+                    val idTH = jsonObject.getString("idTH")
+                    val descripcionTH = jsonObject.getString("descripcionTH")
+                    detallesList.add(Habitacion(idH, descripcionH, idTH, descripcionTH))
+                }
+
+                // Configurar el adaptador del segundo Spinner
+                val detallesAdapter = HabitacionAdapter(this, R.layout.spinner_item, detallesList)
+                sp_h.adapter = detallesAdapter
+            },
+            Response.ErrorListener { error ->
+                error.printStackTrace()
+            }
+        )
+
+        requestQueue.add(jsonArrayRequest)
+    }
+
+
+
+    // MODELO
+    data class TipoHabitacion(val idTH: String, val descripcionTH: String)
+
+    data class Habitacion(val idH: String, val descripcionH: String, val idTH: String, val descripcionTH: String)
+
+    // SEG MODELO
+
+    class TipoHabitacionAdapter(context: Context, private val resource: Int, private val items: List<TipoHabitacion>)
+        : ArrayAdapter<TipoHabitacion>(context, resource, items) {
+
+        override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
+            val view = convertView ?: LayoutInflater.from(context).inflate(resource, parent, false)
+            val item = getItem(position)
+            val textView = view.findViewById<TextView>(R.id.spinner_item_text)
+            textView.text = item?.descripcionTH
+            return view
+        }
+
+        override fun getDropDownView(position: Int, convertView: View?, parent: ViewGroup): View {
+            return getView(position, convertView, parent)
+        }
+        override fun getItem(position: Int): TipoHabitacion? {
+            return super.getItem(position)
+        }
+    }
+
+    class HabitacionAdapter(context: Context, private val resource: Int, private val items: List<Habitacion>)
+        : ArrayAdapter<Habitacion>(context, resource, items) {
+
+        override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
+            val view = convertView ?: LayoutInflater.from(context).inflate(resource, parent, false)
+            val item = getItem(position)
+            val textView = view.findViewById<TextView>(R.id.spinner_item_habitacion)
+            textView.text = item?.descripcionH
+            return view
+        }
+
+        override fun getDropDownView(position: Int, convertView: View?, parent: ViewGroup): View {
+            return getView(position, convertView, parent)
+        }
+        override fun getItem(position: Int): Habitacion? {
+            return super.getItem(position)
         }
     }
 
