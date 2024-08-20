@@ -1,5 +1,6 @@
 package com.example.proyectofinal
 
+import android.annotation.SuppressLint
 import android.app.DatePickerDialog
 import android.app.DatePickerDialog.OnDateSetListener
 import android.app.Dialog
@@ -13,7 +14,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import android.widget.Button
 import android.widget.EditText
+import android.widget.GridView
 import android.widget.ImageButton
 import android.widget.LinearLayout
 import android.widget.Spinner
@@ -33,7 +36,12 @@ import com.android.volley.Response
 import com.android.volley.toolbox.JsonArrayRequest
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
+import com.example.proyectofinal.Model.Model_Alojamiento
 import com.google.gson.Gson
+import construredes.net.appgescr.Controlles.Adapter_Alojamiento
+import org.json.JSONArray
+import org.json.JSONException
+import java.net.URLEncoder
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
@@ -47,15 +55,34 @@ class Alojamiento : AppCompatActivity() {
     lateinit var etFF: EditText
     lateinit var etHI: EditText
     lateinit var etHF: EditText
+    lateinit var tP: TextView
+    lateinit var btnRegistro: Button
     private lateinit var requestQueue: RequestQueue
+
+    private lateinit var adapter: Adapter_Alojamiento
+    private val listaAlojamientos = mutableListOf<Model_Alojamiento>()
+    var gvregistro: GridView? = null
+
     /*********************************************/
+
+    lateinit var sp_pro: Spinner
+    private lateinit var procesoList: List<Proceso>
+    var id_pro: String = ""
+    var id_pro_descripcion: String = ""
+
     lateinit var sp_th: Spinner
     private lateinit var tipoHabitacionList: List<TipoHabitacion>
     var id_th: String = ""
+    var id_th_descripcion: String = ""
 
     lateinit var sp_h: Spinner
     private lateinit var habitacionList: List<Habitacion>
     var id_h: String = ""
+    var id_h_descripcion: String = ""
+
+    private lateinit var habitacion_PrecioList: List<Habitacion_precio>
+    var idHP: String = ""
+    var idHP_descripcion: String = ""
     /*********************************************/
 
     lateinit var imgConsulta: ImageButton
@@ -68,6 +95,7 @@ class Alojamiento : AppCompatActivity() {
     lateinit var edt_dni_app: EditText
     /*********************************************/
 
+    @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -92,10 +120,19 @@ class Alojamiento : AppCompatActivity() {
         etFF = findViewById(R.id.etFF)
         etHI = findViewById(R.id.etHI)
         etHF = findViewById(R.id.etHF)
+        tP = findViewById(R.id.tP)
         imgConsulta = findViewById(R.id.imgConsulta)
+        sp_pro = findViewById(R.id.sPro)
         sp_th = findViewById(R.id.sTH)
         sp_h = findViewById(R.id.sH)
+        btnRegistro = findViewById(R.id.btnRegistro)
+        gvregistro = findViewById(R.id.gvregistro)
+        // Configura el GridView
+        adapter = Adapter_Alojamiento(this, listaAlojamientos)
+        gvregistro?.adapter = adapter
+
         requestQueue = Volley.newRequestQueue(this)
+
         imgConsulta.setOnClickListener() {
             try {
                 if (edt_cant_inquilinos_.text.toString() == "") {
@@ -109,15 +146,28 @@ class Alojamiento : AppCompatActivity() {
             }
 
         }
+        btnRegistro.setOnClickListener(){
+            try {
+                insertarAlojamientoCab()
+            }catch (e: Exception) {
+                Log.e("error_reg",e.message.toString())
+            }
+        }
 
+        obtenerTodosLosAlojamientos()
+
+        // INICIOS DE PROCESOS DE USO DE PICKERS (DATE Y TIME)
         getCalendarioLibre(etFI);
         getCalendarioLibre(etFF);
         gettime(etHI);
         gettime(etHF);
+        // FIN
+        // INICIO DE LLENADO DE SPINNER
+        cargar_list_pro();
         cargar_list_th();
-
     }
-
+        // AGREGAR N CANTIDAD DE ITEMS DE DNI PARA CONSULTAR
+            // BEGIN
     private fun agregarInquilinos(n: Int) {
         val inflater = LayoutInflater.from(this)
 
@@ -133,19 +183,20 @@ class Alojamiento : AppCompatActivity() {
             val tv_apellido: TextView = view.findViewById(R.id.tv_apellidos_)
 
             btnSelect.setOnClickListener {
+                // AQUI USAMOS EL EVENTO ONCLICK PARA CONSULTAR EL DNI MEDIANTE SUS EDITTET ENVIAR LA DATA (DNI) Y PROCESARLA
                 tv_nombre_app = tv_nombre
                 tv_apellido_app  = tv_apellido
                 edt_dni_app = edt_dni
+                // FUNCIÓN DE CONSULTA DE DNI
                 Consultar_Dni()
             }
             containerPhotos?.addView(view)
         }
     }
-
+            // END
     private fun gettime(editText: EditText) {
         editText.setOnClickListener { TimeSetter(editText) }
     }
-
     class TimeSetter(private val editText: EditText) : View.OnFocusChangeListener, TimePickerDialog.OnTimeSetListener, View.OnClickListener {
 
         private var calendar: Calendar? = null
@@ -192,12 +243,9 @@ class Alojamiento : AppCompatActivity() {
         }
     }
 
-
-
     private fun getCalendarioLibre(editText: EditText) {
         editText.setOnClickListener { showDatePickerDialogLibre(editText) }
     }
-
     private fun showDatePickerDialogLibre(editText: EditText) {
         val newFragmentLibre = DatePickerFragmnetLibre.newInstance { datePicker, year, month, day ->
             val selectedDate = "${DosDigitos(day)}/${DosDigitos(month + 1)}/$year"
@@ -208,7 +256,6 @@ class Alojamiento : AppCompatActivity() {
     private fun DosDigitos(n: Int): String {
         return if (n <= 9) "0$n" else n.toString()
     }
-
     class DatePickerFragmnetLibre : DialogFragment() {
         private var listener: OnDateSetListener? = null
 
@@ -238,8 +285,57 @@ class Alojamiento : AppCompatActivity() {
         }
     }
 
-    fun cargar_list_th()
-    {
+    fun cargar_list_pro() {
+        val url = "https://transportetresdiamantes.com/config_hotel/listar_proceso.php"
+
+        val jsonArrayRequest = JsonArrayRequest(
+            Request.Method.GET, url, null,
+            Response.Listener { response ->
+                val dataList = ArrayList<Proceso>()
+                for (i in 0 until response.length()) {
+                    val jsonObject = response.getJSONObject(i)
+                    val idP = jsonObject.getString("idP")
+                    val descripcionP = jsonObject.getString("descripcionP")
+                    dataList.add(Proceso(idP, descripcionP))
+                }
+                procesoList = dataList
+
+                // Configurar el adaptador del Spinner
+                val adapter = ProcesoAdapter(this, R.layout.spinner_item, dataList)
+                sp_pro.adapter = adapter
+            },
+            Response.ErrorListener { error ->
+                error.printStackTrace()
+            }
+        )
+
+        requestQueue.add(jsonArrayRequest)
+
+        // Configurar el listener para obtener el ID del ítem seleccionado
+        sp_pro.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                val selectedItem = procesoList[position]
+                id_pro = selectedItem.idP
+                id_pro_descripcion = selectedItem.descripcionP
+
+                // Aquí agregas el Log.d para verificar el valor de id_pro
+                Log.d("IDPseleccionado", "Valor de id_pro: $id_pro")
+
+                try {
+                    // Aquí puedes agregar más lógica si es necesario
+                } catch (e: Exception) {
+                    Toast.makeText(this@Alojamiento, e.message, Toast.LENGTH_SHORT).show()
+                    Log.e("erorrenjson", e.message.toString())
+                }
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+                // No hacer nada si no se selecciona ningún ítem
+            }
+        }
+    }
+
+    fun cargar_list_th() {
         val url = "https://transportetresdiamantes.com/config_hotel/listar_combo_tipo_habitacion.php"
 
         val jsonArrayRequest = JsonArrayRequest(
@@ -270,7 +366,13 @@ class Alojamiento : AppCompatActivity() {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                 val selectedItem = tipoHabitacionList[position]
                 id_th = selectedItem.idTH
-                cargar_list_h(id_th);
+                id_th_descripcion = selectedItem.descripcionTH
+                try {
+                    cargar_list_h(id_th)
+                } catch (e: Exception) {
+                    Toast.makeText(this@Alojamiento, e.message, Toast.LENGTH_SHORT).show()
+                    Log.e("erorrenjson", e.message.toString())
+                }
             }
 
             override fun onNothingSelected(parent: AdapterView<*>?) {
@@ -278,44 +380,161 @@ class Alojamiento : AppCompatActivity() {
             }
         }
     }
-
     fun cargar_list_h(idTH: String) {
-        val url = "https://transportetresdiamantes.com/config_hotel/listar_detalles.php?idTH=$idTH"
+        val url = "https://transportetresdiamantes.com/config_hotel/listar_combo_habitacion.php"
 
-        val jsonArrayRequest = JsonArrayRequest(
-            Request.Method.GET, url, null,
+        val jsonArrayRequest = object : JsonArrayRequest(
+            Request.Method.POST, url, null,
             Response.Listener { response ->
-                val detallesList = ArrayList<Habitacion>()
-                for (i in 0 until response.length()) {
-                    val jsonObject = response.getJSONObject(i)
-                    val idH = jsonObject.getString("idH")
-                    val descripcionH = jsonObject.getString("descripcionH")
-                    val idTH = jsonObject.getString("idTH")
-                    val descripcionTH = jsonObject.getString("descripcionTH")
-                    detallesList.add(Habitacion(idH, descripcionH, idTH, descripcionTH))
+                val dataList = ArrayList<Habitacion>()
+                try {
+                    // Manejar la respuesta como un JSONArray
+                    for (i in 0 until response.length()) {
+                        val jsonObject = response.getJSONObject(i)
+                        val idH = jsonObject.getString("idH")
+                        val descripcionH = jsonObject.getString("descripcionH")
+                        dataList.add(Habitacion(idH, descripcionH))
+                    }
+                } catch (e: JSONException) {
+                    e.printStackTrace()
+                    Toast.makeText(this@Alojamiento, "Error en la respuesta del servidor: ${e.message}", Toast.LENGTH_SHORT).show()
                 }
+                habitacionList = dataList
 
-                // Configurar el adaptador del segundo Spinner
-                val detallesAdapter = HabitacionAdapter(this, R.layout.spinner_item, detallesList)
-                sp_h.adapter = detallesAdapter
+                // Configurar el adaptador del Spinner
+                val adapter = HabitacionAdapter(this@Alojamiento, R.layout.spinner_item, dataList)
+                sp_h.adapter = adapter
             },
             Response.ErrorListener { error ->
                 error.printStackTrace()
+                Toast.makeText(this@Alojamiento, "Error en la solicitud: ${error.message}", Toast.LENGTH_SHORT).show()
             }
-        )
+        ) {
+            override fun getHeaders(): Map<String, String> {
+                val headers = HashMap<String, String>()
+                headers["Content-Type"] = "application/x-www-form-urlencoded"
+                return headers
+            }
+
+            override fun getBody(): ByteArray {
+                val params = HashMap<String, String>()
+                params["idTH"] = idTH
+
+                // Convertir el mapa a un formato de URL codificado
+                val encodedParams = params.map { (key, value) ->
+                    "${URLEncoder.encode(key, "UTF-8")}=${URLEncoder.encode(value, "UTF-8")}"
+                }.joinToString("&")
+
+                return encodedParams.toByteArray(Charsets.UTF_8)
+            }
+        }
+
+        requestQueue.add(jsonArrayRequest)
+
+        // Configurar el listener para obtener el ID del ítem seleccionado
+        sp_h.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                val selectedItem = habitacionList[position]
+                id_h = selectedItem.idH
+                id_h_descripcion = selectedItem.descripcionH
+                try {
+                    cargar_precio_h(id_h)
+                }catch (e: Exception){
+                    Log.e("errorprecio", e.message.toString())
+                }
+
+                // Toast.makeText(this@Alojamiento, id_h, Toast.LENGTH_SHORT).show()
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+                // No hacer nada si no se selecciona ningún ítem
+            }
+        }
+    }
+    fun cargar_precio_h(idH: String) {
+        val url = "https://transportetresdiamantes.com/config_hotel/cargar_habitacion_Precio.php"
+
+        val jsonArrayRequest = object : JsonArrayRequest(
+            Method.POST, url, null,
+            Response.Listener { response ->
+                val dataList = ArrayList<Habitacion_precio>()
+
+                try {
+                    // Imprimir la respuesta del servidor para depuración
+                    Log.d("CargarPrecioH", "Respuesta del servidor: $response")
+
+                    // Manejar la respuesta como un JSONArray
+                    for (i in 0 until response.length()) {
+                        val jsonObject = response.getJSONObject(i)
+                        idHP = jsonObject.getString("idHP")
+                        val precio = jsonObject.getString("precio")
+                        dataList.add(Habitacion_precio(idHP, precio))
+                    }
+                    habitacion_PrecioList = dataList
+
+                    // Mostrar el primer elemento si existe
+                    if (habitacion_PrecioList.isNotEmpty()) {
+                        val selectedItem = habitacion_PrecioList[0]
+                        idHP = selectedItem.idHP
+                        idHP_descripcion = selectedItem.precio
+                        tP.setText(selectedItem.precio)
+
+                    } else {
+                        Toast.makeText(this@Alojamiento, "No hay datos disponibles", Toast.LENGTH_SHORT).show()
+                    }
+                } catch (e: JSONException) {
+                    e.printStackTrace()
+                    Toast.makeText(this@Alojamiento, "Error en el procesamiento de datos: ${e.message}", Toast.LENGTH_SHORT).show()
+                }
+            },
+            Response.ErrorListener { error ->
+                error.printStackTrace()
+                Toast.makeText(this@Alojamiento, "Error en la solicitud: ${error.message}", Toast.LENGTH_SHORT).show()
+            }
+        ) {
+            override fun getHeaders(): Map<String, String> {
+                return mapOf("Content-Type" to "application/x-www-form-urlencoded")
+            }
+
+            override fun getBody(): ByteArray {
+                val params = mapOf("idH" to idH)
+                val encodedParams = params.map { (key, value) ->
+                    "${URLEncoder.encode(key, "UTF-8")}=${URLEncoder.encode(value, "UTF-8")}"
+                }.joinToString("&")
+
+                Log.d("CargarPrecioH", "Parametros codificados: $encodedParams")
+                return encodedParams.toByteArray(Charsets.UTF_8)
+            }
+        }
 
         requestQueue.add(jsonArrayRequest)
     }
 
-
-
     // MODELO
+    data class Proceso(val idP: String, val descripcionP: String)
     data class TipoHabitacion(val idTH: String, val descripcionTH: String)
-
-    data class Habitacion(val idH: String, val descripcionH: String, val idTH: String, val descripcionTH: String)
+    data class Habitacion(val idH: String, val descripcionH: String)
+    data class Habitacion_precio(val idHP: String, val precio: String)
 
     // SEG MODELO
+    class ProcesoAdapter(context: Context, private val resource: Int, private val items: List<Proceso>)
+        : ArrayAdapter<Proceso>(context, resource, items) {
 
+        override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
+            val view = convertView ?: LayoutInflater.from(context).inflate(resource, parent, false)
+            val item = getItem(position)
+            val textView = view.findViewById<TextView>(R.id.spinner_item_text)
+            textView.text = item?.descripcionP
+            return view
+        }
+
+        override fun getDropDownView(position: Int, convertView: View?, parent: ViewGroup): View {
+            return getView(position, convertView, parent)
+        }
+        override fun getItem(position: Int): Proceso? {
+            return super.getItem(position)
+        }
+    }
     class TipoHabitacionAdapter(context: Context, private val resource: Int, private val items: List<TipoHabitacion>)
         : ArrayAdapter<TipoHabitacion>(context, resource, items) {
 
@@ -334,14 +553,13 @@ class Alojamiento : AppCompatActivity() {
             return super.getItem(position)
         }
     }
-
     class HabitacionAdapter(context: Context, private val resource: Int, private val items: List<Habitacion>)
         : ArrayAdapter<Habitacion>(context, resource, items) {
 
         override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
             val view = convertView ?: LayoutInflater.from(context).inflate(resource, parent, false)
             val item = getItem(position)
-            val textView = view.findViewById<TextView>(R.id.spinner_item_habitacion)
+            val textView = view.findViewById<TextView>(R.id.spinner_item_text)
             textView.text = item?.descripcionH
             return view
         }
@@ -355,6 +573,130 @@ class Alojamiento : AppCompatActivity() {
     }
 
 
+    fun insertarAlojamientoCab() {
+        val url = "https://transportetresdiamantes.com/config_hotel/insertar_alojamiento.php"
+
+        val stringRequest = object : StringRequest(
+            Method.POST, url,
+            Response.Listener { response ->
+                try {
+                    Log.d("agregarAlojamiento", "Respuesta del servidor: $response")
+                    Toast.makeText(this, "Alojamiento registrado con éxito", Toast.LENGTH_SHORT).show()
+                    limpiarElementos()
+                } catch (e: Exception) {
+                    Log.e("agregarAlojamiento", "Error en la respuesta: ${e.message}")
+                }
+            },
+            Response.ErrorListener { error ->
+                error.printStackTrace()
+
+                // Construir el mensaje de error
+                val errorMsg = error.networkResponse?.let {
+                    val statusCode = it.statusCode
+                    val responseBody = String(it.data)
+                    "Código de error: $statusCode, Respuesta: $responseBody"
+                } ?: "Error en la solicitud: ${error.message}"
+
+                // Imprimir el mensaje de error en Logcat
+                Log.e("esolicitud", errorMsg)
+
+                // Mostrar el mensaje de error en un Toast
+                Toast.makeText(this, errorMsg, Toast.LENGTH_SHORT).show()
+            }
+
+        ) {
+            override fun getHeaders(): Map<String, String> {
+                val headers = HashMap<String, String>()
+                headers["Content-Type"] = "application/x-www-form-urlencoded"
+                return headers
+            }
+
+            override fun getParams(): Map<String, String> {
+                val params = HashMap<String, String>()
+                params["idTH"] = id_th
+                params["idH"] = id_h
+                params["idHP"] = idHP
+                params["idP"] = id_pro
+                params["fechaInicio"] = etFI.text.toString()
+                params["horaInicio"] = etHI.text.toString()
+                params["fechaFin"] = etFF.text.toString()
+                params["horaFin"] = etHF.text.toString()
+
+                Log.d("insertarAlojamientoCab", "Params: $params")
+                return params
+            }
+        }
+
+        requestQueue.add(stringRequest)
+    }
+
+
+    fun obtenerTodosLosAlojamientos() {
+        val url = "https://transportetresdiamantes.com/config_hotel/listar_alojamiento_cab.php"
+
+        val stringRequest = object : StringRequest(
+            Method.GET, url,
+            Response.Listener { response ->
+                try {
+                    // Procesa la respuesta JSON
+                    val jsonArray = JSONArray(response)
+                    listaAlojamientos.clear()
+                    for (i in 0 until jsonArray.length()) {
+                        val jsonObject = jsonArray.getJSONObject(i)
+                        val descripcionTH = jsonObject.getString("descripcionTH")
+                        val descripcionH = jsonObject.getString("descripcionH")
+                        val descripcionP = jsonObject.getString("descripcionP")
+                        val precio = jsonObject.getDouble("precio")
+                        val fechaInicio = jsonObject.getString("fechaInicio")
+                        val fechaFin = jsonObject.getString("fechaFin")
+                        val horaInicio = jsonObject.getString("horaInicio")
+                        val horaFin = jsonObject.getString("horaFin")
+
+                        // Aquí debes asegurarte de proporcionar todos los parámetros al crear Model_Alojamiento
+                        val nuevoAlojamiento = Model_Alojamiento(
+                            countID = i, // Puedes usar el índice del bucle como countID si no tienes otro valor
+                            idAC = "",
+                            idTH_descripcion = descripcionTH,
+                            idH_descripcion = descripcionH,
+                            idP_descripcion = descripcionP,
+                            fechaInicio = fechaInicio,
+                            idHP_descripcion = precio,
+                            fechaFin = fechaFin,
+                            horaInicio = horaInicio,
+                            horaFin = horaFin
+                        )
+                        listaAlojamientos.add(nuevoAlojamiento)
+                    }
+                    adapter.notifyDataSetChanged() // Actualiza la vista
+                } catch (e: Exception) {
+                    Log.e("obtenerAlojamientos", "Error en la respuesta: ${e.message}")
+                }
+            },
+            Response.ErrorListener { error ->
+                error.printStackTrace()
+                Toast.makeText(this, "Error en la solicitud: ${error.message}", Toast.LENGTH_SHORT).show()
+            }
+        ) {
+            override fun getHeaders(): Map<String, String> {
+                val headers = HashMap<String, String>()
+                headers["Content-Type"] = "application/x-www-form-urlencoded"
+                return headers
+            }
+        }
+
+        requestQueue.add(stringRequest)
+    }
+
+    private fun limpiarElementos(){
+        etFI.setText("")
+        etHI.setText("")
+        etFF.setText("")
+        etHF.setText("")
+    }
+
+
+// PROCESO DE CONSULTA DE DNI
+    //  BEGIN
     fun Consultar_Dni() {
         when {
             edt_dni_app.text.toString().isEmpty() -> {
@@ -374,10 +716,13 @@ class Alojamiento : AppCompatActivity() {
 
                         // Usa android.util.Log
                         Log.d("ServerResponse", response)
-
+                        // EL RESPONSE OBTENIDO EN FORMATO JSON LO SERIALIZAMOS Y TOMAMOS LOS CAMPOS NOMBRES, AP PATERNO, AP MATERNO
                         val apiResponse = parseJsonResponse(response)
                         tv_nombre_app.setText(apiResponse.data.nombres)
                         tv_apellido_app.setText(apiResponse.data.apellido_paterno + " " + apiResponse.data.apellido_materno)
+                        // array list
+                        // miarray(tv_nombre.gettext, tv_apellid.gettext, tv_dni.gett, tv_dni_antig)
+                        // tv_nombre.gettext, tv_apellid.gettext, tv_dni.gett
                        //Toast.makeText( applicationContext,"Nombre completo: ${apiResponse.data.nombres}",Toast.LENGTH_SHORT).show()
 //                        else {
 ////                            Toast.makeText(this@Logeo, response, Toast.LENGTH_SHORT).show()
@@ -391,6 +736,7 @@ class Alojamiento : AppCompatActivity() {
                     @Throws(AuthFailureError::class)
                     override fun getParams(): Map<String, String> {
                         return hashMapOf(
+                            // ENVIO DE PARÁMETRO DE DNI TOMAMOS COMO REFERENCIA EL CAMPO usuario, CAMPO NOMBRADO EN EL WEB SERVICE DE PHP
                             "usuario" to str_dni
                         )
                     }
@@ -401,17 +747,21 @@ class Alojamiento : AppCompatActivity() {
             }
         }
     }
+        // FUNCIÓN DE PARSEO DE DATA DE DNI
     fun parseJsonResponse(jsonResponse: String): ApiResponse {
         val gson = Gson()
         return gson.fromJson(jsonResponse, ApiResponse::class.java)
     }
 
+        // CREAMOS LA CLASE DE API RESPONSE PARA VALIDAR EL JSON
     data class ApiResponse(
         val success: Boolean,
         val data: UserData,
         val time: Double,
         val source: String
     )
+       /*  CREAMOS NUESTRA CLASE UserData (MODELO) PARA QUE LOS DATOS DEL JSON SEAN TOMANDOS EN UN LIST TIPO CLASE Y COMO SE PUEDE VER
+         SE TIENE LOS CAMPOS, NOMBRES, AP PATERNO, AP MATERNO */
     data class UserData(
         val numero: String,
         val nombre_completo: String,
@@ -424,4 +774,95 @@ class Alojamiento : AppCompatActivity() {
         val direccion: String
     )
 
+    // END
+
+    /*
+    fun agregar_al_array(
+        Textview_name: TextView,
+        Textview_ruta: TextView,
+        name_anterior: TextView,
+        proceso: Int?
+    ) {
+        // REEMPLAZAR
+        var pk1: String? = ""
+        try {
+            pk1 = BASESTRING(Textview_ruta.text.toString(), this@externas_inspecciones)
+        } catch (ex: java.lang.Exception) {
+            println("error " + ex.message)
+        }
+
+        if (!name_anterior.text.toString().isEmpty()) // si no está vacío
+        {
+            if (name_anterior.text.toString() !== Textview_name.text.toString()) {
+                // Supongamos que quieres reemplazar la imagen llamada "imagen1.jpg"
+                val nombreImagenBuscada = name_anterior.text.toString()
+                var nuevaInfo: ImagenInfo? = null
+                when (proceso) {
+                    1 -> nuevaInfo = ImagenInfo(Textview_name.text.toString(), "ANTES", pk1)
+                    2 -> nuevaInfo = ImagenInfo(Textview_name.text.toString(), "DURANTE", pk1)
+                    3 -> nuevaInfo = ImagenInfo(Textview_name.text.toString(), "DESPUES", pk1)
+                }
+                for (lista2D in listaTridimensional) {
+                    for (lista1D in lista2D) {
+                        for (k in lista1D.indices) {
+                            val info: ImagenInfo = lista1D[k]
+                            if (info.getImagen().equals(nombreImagenBuscada)) {
+                                // Reemplaza el dato
+                                lista1D[k] = nuevaInfo
+                                break // Si solo deseas reemplazar la primera coincidencia
+                            }
+                        }
+                    }
+                }
+                when (proceso) {
+                    1 -> name_foto_anterior.setText(name_foto.getText().toString())
+                    2 -> name_foto_anterior_durante.setText(name_foto_durante.getText().toString())
+                    3 -> name_foto_anterior_despues.setText(name_foto_despues.getText().toString())
+                }
+            } else {
+                var info1: ImagenInfo? = null
+                when (proceso) {
+                    1 -> info1 = ImagenInfo(Textview_name.text.toString(), "ANTES", pk1)
+                    2 -> info1 = ImagenInfo(Textview_name.text.toString(), "DURANTE", pk1)
+                    3 -> info1 = ImagenInfo(Textview_name.text.toString(), "DESPUES", pk1)
+                }
+                // Primera dimensión
+                val lista1: ArrayList<ImagenInfo?> = ArrayList<ImagenInfo?>()
+                lista1.add(info1)
+                // Segunda dimensión
+                val lista2D: ArrayList<ArrayList<ImagenInfo?>> = ArrayList<ArrayList<ImagenInfo?>>()
+                lista2D.add(lista1)
+                // Añadir a la tercera dimensión
+                listaTridimensional.add(lista2D)
+            }
+        }
+
+        try {
+            var lista2D: ArrayList<ArrayList<ImagenInfo>>
+            // Iterar sobre la lista tridimensional
+            for (i in 0 until listaTridimensional.size()) {
+                lista2D = listaTridimensional.get(i)
+
+                for (j in lista2D.indices) {
+                    val lista1D: ArrayList<ImagenInfo> = lista2D[j]
+
+                    for (k in lista1D.indices) {
+                        val info: ImagenInfo = lista1D[k]
+
+                        // Acceder a los datos
+                        System.out.println("Imagen: " + info.getImagen())
+                        System.out.println("Tipo: " + info.getTipo())
+                        // System.out.println("Byte de Imagen: " + info.getByteDeImagen());
+                    }
+                }
+            }
+        } catch (ex: java.lang.Exception) {
+            println("error")
+        }
+    }
+    */
+
+
 }
+
+

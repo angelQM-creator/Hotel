@@ -78,7 +78,7 @@ class Logeo : AppCompatActivity() {
                         // Usa android.util.Log
                         Log.d("ServerResponse", response)
 
-                        if (response.equals("ingreso", ignoreCase = true)) {
+                        if (response.startsWith("Bienvenido", ignoreCase = true)) {
                             usuario.setText("")
                             password.setText("")
                             startActivity(Intent(applicationContext, Oferta::class.java))
