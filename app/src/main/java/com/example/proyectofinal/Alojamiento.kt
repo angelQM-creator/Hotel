@@ -89,7 +89,7 @@ class Alojamiento : AppCompatActivity() {
     var idHP: String = ""
     var idHP_descripcion: String = ""
 
-    var id_ac: String = ""
+    private val listaIdsAlojamientos = mutableListOf<String>()
     /*********************************************/
 
     lateinit var imgConsulta: ImageButton
@@ -190,6 +190,19 @@ class Alojamiento : AppCompatActivity() {
             // Llama a la función para editar el alojamiento
             editarAlojamientoCab(idAC, fechaInicio, fechaFin, horaInicio, horaFin, idTH.toInt(), idH.toInt(), idP.toInt(), idHP.toInt())
         }
+
+        btnEliminar.setOnClickListener {
+            val idAC = currentIdAC ?: run {
+                Toast.makeText(this, "ID de Alojamiento no encontrado", Toast.LENGTH_SHORT).show() // Muestra un mensaje si no se encuentra el ID de alojamiento
+                return@setOnClickListener // Sale del listener si no se encuentra el ID
+            }
+
+            // Llama a la función para eliminar el alojamiento
+            eliminarAlojamientoCab(idAC)
+        }
+
+
+
 
         obtenerTodosLosAlojamientos() // Llama a la función para obtener todos los alojamientos
 
@@ -684,6 +697,7 @@ class Alojamiento : AppCompatActivity() {
                     Toast.makeText(this, "Alojamiento registrado con éxito", Toast.LENGTH_SHORT).show()
                     // Limpia los elementos de la interfaz de usuario (por ejemplo, campos de texto)
                     limpiarElementos()
+                    obtenerTodosLosAlojamientos()
                 } catch (e: Exception) {
                     // Captura y maneja cualquier excepción que ocurra al procesar la respuesta
                     Log.e("agregarAlojamiento", "Error en la respuesta: ${e.message}")
@@ -761,6 +775,7 @@ class Alojamiento : AppCompatActivity() {
                     val jsonArray = JSONArray(response)
                     // Limpia la lista de alojamientos actual
                     listaAlojamientos.clear()
+                    listaIdsAlojamientos.clear()
                     // Itera sobre el JSONArray para procesar cada objeto JSON
                     for (i in 0 until jsonArray.length()) {
                         // Obtiene el objeto JSON en la posición actual
@@ -791,6 +806,8 @@ class Alojamiento : AppCompatActivity() {
                         )
                         // Añade el nuevo objeto a la lista de alojamientos
                         listaAlojamientos.add(nuevoAlojamiento)
+                        // Añade el ID a la lista de IDs
+                        listaIdsAlojamientos.add(idAC)
                     }
                     // Notifica al adaptador que los datos han cambiado y que debe actualizarse
                     adapter.notifyDataSetChanged()
@@ -818,6 +835,7 @@ class Alojamiento : AppCompatActivity() {
         // Añade la solicitud a la cola de solicitudes para ser ejecutada
         requestQueue.add(stringRequest)
     }
+
 
 
     fun setIdAC(idAC: Int) {
@@ -854,6 +872,8 @@ class Alojamiento : AppCompatActivity() {
                     Log.e("IDP", "ID del Proceso: $idP")
                     // Limpia los elementos de la interfaz (posiblemente campos de entrada)
                     limpiarElementos()
+                    // Actualiza la lista de alojamientos
+                    obtenerTodosLosAlojamientos()
                 } else {
                     // Muestra un mensaje Toast indicando que hubo un error al editar el alojamiento
                     Toast.makeText(this, "Error al editar alojamiento", Toast.LENGTH_SHORT).show()
@@ -881,9 +901,72 @@ class Alojamiento : AppCompatActivity() {
                 params["idHP"] = idHP.toString()
                 return params
             }
+
+            // Override del método getHeaders para especificar los encabezados HTTP de la solicitud
+            override fun getHeaders(): Map<String, String> {
+                val headers = HashMap<String, String>()
+                headers["Content-Type"] = "application/x-www-form-urlencoded"
+                return headers
+            }
         }
 
         // Crea una nueva cola de solicitudes de Volley y añade la solicitud a la cola
+        Volley.newRequestQueue(this).add(stringRequest)
+    }
+
+    fun eliminarAlojamientoCab(idAC: Int) {
+        // Define la URL del script PHP que se encargará de eliminar el alojamiento
+        val url = "https://transportetresdiamantes.com/config_hotel/eliminar_alojamiento.php"
+
+        // Crea una instancia de StringRequest para enviar una solicitud POST
+        val stringRequest = object : StringRequest(
+            Method.POST, url,
+            // Maneja la respuesta exitosa del servidor
+            Response.Listener { response ->
+                // Registra la respuesta para depuración
+                Log.d("eliminarAlojamientoCab", "Response: $response")
+
+                // Verifica si la respuesta contiene el mensaje de éxito esperado
+                if (response.contains("Alojamiento eliminado con éxito")) {
+                    // Muestra un mensaje de éxito al usuario
+                    Toast.makeText(this, "Alojamiento eliminado correctamente", Toast.LENGTH_SHORT).show()
+                    // Limpia los elementos de la interfaz
+                    limpiarElementos()
+                    // Obtiene la lista actualizada de alojamientos
+                    obtenerTodosLosAlojamientos()
+                } else {
+                    // Si la respuesta no es la esperada, muestra un mensaje de error
+                    Toast.makeText(this, "Error al eliminar alojamiento", Toast.LENGTH_SHORT).show()
+                    // Registra el error para depuración
+                    Log.e("eliminarAlojamientoCab", "Error al eliminar alojamiento: $response")
+                }
+            },
+            // Maneja los errores de la solicitud
+            Response.ErrorListener { error ->
+                // Registra el error para depuración
+                Log.e("eliminarAlojamientoCab", "Error: ${error.message}")
+                // Muestra un mensaje de error de red al usuario
+                Toast.makeText(this, "Error de red: ${error.message}", Toast.LENGTH_SHORT).show()
+            }
+        ) {
+            // Devuelve los parámetros de la solicitud POST
+            override fun getParams(): Map<String, String> {
+                // Crea un mapa de parámetros con el id del alojamiento a eliminar
+                val params = HashMap<String, String>()
+                params["idAC"] = idAC.toString()
+                return params
+            }
+
+            // Devuelve las cabeceras de la solicitud
+            override fun getHeaders(): Map<String, String> {
+                // Crea un mapa de cabeceras con el tipo de contenido de la solicitud
+                val headers = HashMap<String, String>()
+                headers["Content-Type"] = "application/x-www-form-urlencoded"
+                return headers
+            }
+        }
+
+        // Crea una cola de solicitudes Volley y añade la solicitud StringRequest
         Volley.newRequestQueue(this).add(stringRequest)
     }
 
