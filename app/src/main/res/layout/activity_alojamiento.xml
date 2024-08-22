@@ -374,10 +374,30 @@
 
                         <Button
                             android:id="@+id/btnRegistro"
-                            android:layout_width="match_parent"
+                            android:layout_width="wrap_content"
+                            android:layout_height="38dp"
+                            android:layout_gravity="start"
+                            android:text="REGISTRAR"
+                            android:textColor="@color/white"
+                            android:textSize="18sp"
+                            android:textStyle="bold" />
+
+                        <Button
+                            android:id="@+id/btnEditar"
+                            android:layout_width="wrap_content"
                             android:layout_height="38dp"
                             android:layout_gravity="center"
-                            android:text="REGISTRAR"
+                            android:text="EDITAR"
+                            android:textColor="@color/white"
+                            android:textSize="18sp"
+                            android:textStyle="bold" />
+
+                        <Button
+                            android:id="@+id/btnEliminar"
+                            android:layout_width="wrap_content"
+                            android:layout_height="38dp"
+                            android:layout_gravity="end"
+                            android:text="ELIMINAR"
                             android:textColor="@color/white"
                             android:textSize="18sp"
                             android:textStyle="bold" />

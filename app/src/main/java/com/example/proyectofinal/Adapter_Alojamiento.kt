@@ -1,16 +1,14 @@
-package construredes.net.appgescr.Controlles;
+package construredes.net.appgescr.Controlles
 
 import android.annotation.SuppressLint
-import android.app.Activity;
-import android.content.Context;
+import android.app.Activity
+import android.content.Context
 import android.graphics.Color
-import android.util.Log;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.BaseAdapter;
-import android.widget.Button;
-import android.widget.TextView;
-
+import android.util.Log
+import android.view.View
+import android.view.ViewGroup
+import android.widget.BaseAdapter
+import android.widget.TextView
 import android.view.LayoutInflater
 import android.widget.RelativeLayout
 import android.widget.Toast
@@ -18,34 +16,42 @@ import com.example.proyectofinal.Alojamiento
 import com.example.proyectofinal.Model.Model_Alojamiento
 import com.example.proyectofinal.R
 
-
+// Definición del adaptador personalizado para mostrar los datos de alojamiento en una lista
 class Adapter_Alojamiento(private val mContext: Context, private val lista: MutableList<Model_Alojamiento>) : BaseAdapter() {
 
+    // Inicialización del adaptador
     init {
+        // Verifica que el contexto proporcionado sea una instancia de Activity
         if (mContext !is Activity) {
             throw IllegalArgumentException("El contexto debe ser una instancia de Activity")
         }
     }
 
+    // Devuelve el número total de elementos en la lista
     override fun getCount(): Int {
         return lista.size
     }
 
+    // Devuelve el elemento en la posición especificada
     override fun getItem(position: Int): Any {
         return lista[position]
     }
 
+    // Devuelve el ID del elemento en la posición especificada (usando countID como identificador único)
     override fun getItemId(position: Int): Long {
         return lista[position].countID.toLong()
     }
 
+    // Variable para mantener la posición actualmente seleccionada
     @SuppressLint("MissingInflatedId")
     private var selectedPosition: Int = -1
 
+    // Crea y configura la vista para cada elemento en la lista
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
         val viewHolder: ViewHolder
         val v: View
 
+        // Si la vista de conversión es nula, infla una nueva vista y crea un ViewHolder
         if (convertView == null) {
             v = LayoutInflater.from(mContext).inflate(R.layout.item_list_alojamiento, parent, false)
             viewHolder = ViewHolder(
@@ -62,12 +68,14 @@ class Adapter_Alojamiento(private val mContext: Context, private val lista: Muta
             )
             v.tag = viewHolder
         } else {
+            // Si la vista de conversión no es nula, reutiliza la vista y el ViewHolder
             v = convertView
             viewHolder = v.tag as ViewHolder
         }
 
-        // Configuración de los valores
+        // Obtiene el objeto de alojamiento en la posición actual
         val alojamiento = lista[position]
+        // Configura los valores de los TextViews con los datos del objeto de alojamiento
         viewHolder.tvID.text = alojamiento.idAC
         viewHolder.tvPrecio.text = alojamiento.idHP_descripcion.toString()
         viewHolder.tvHabitacion.text = alojamiento.idH_descripcion
@@ -78,77 +86,71 @@ class Adapter_Alojamiento(private val mContext: Context, private val lista: Muta
         viewHolder.tvHI.text = alojamiento.horaInicio
         viewHolder.tvHF.text = alojamiento.horaFin
 
-        // Restaura el color de fondo predeterminado para la vista actual
+        // Configura el color de fondo para indicar la selección del elemento
         if (position == selectedPosition) {
-            viewHolder.id_tp.setBackgroundColor(Color.parseColor("#00FF00"))
+            viewHolder.id_tp.setBackgroundColor(Color.parseColor("#00FF00")) // Verde para el elemento seleccionado
         } else {
-            viewHolder.id_tp.setBackgroundColor(Color.parseColor("#6D92AD"))
+            viewHolder.id_tp.setBackgroundColor(Color.parseColor("#6D92AD")) // Azul para los elementos no seleccionados
         }
 
+        // Configura el listener de clic para la vista id_tp
         viewHolder.id_tp.setOnClickListener {
             selectedPosition = position
-            notifyDataSetChanged()
+            notifyDataSetChanged() // Notifica al adaptador que los datos han cambiado y actualiza la vista
 
             try {
+                // Obtiene la actividad actual y verifica que sea una instancia de Alojamiento
                 (mContext as? Activity)?.let { activity ->
                     val alojamientoActivity = activity as? Alojamiento
+
+                    // Asigna el ID de AlojamientoCab a la actividad actual
+                    val idAC = alojamiento.idAC // Obtiene el ID de AlojamientoCab del objeto
+                    alojamientoActivity?.setIdAC(idAC.toInt()) // Llama a un método en la actividad para establecer el idAC
+                    Log.e("ID_AC", "ID de AlojamientoCab: $idAC")
+
+                    // Configura los EditTexts de la actividad con los datos del alojamiento seleccionado
                     alojamientoActivity?.etFI?.setText(viewHolder.tvFI.text.toString())
                     alojamientoActivity?.etFF?.setText(viewHolder.tvFF.text.toString())
                     alojamientoActivity?.etHI?.setText(viewHolder.tvHI.text.toString())
                     alojamientoActivity?.etHF?.setText(viewHolder.tvHF.text.toString())
 
-                    // Obtener el texto del proceso desde el TextView
+                    // Obtiene el texto del proceso desde el TextView y busca el índice en la lista de procesos
                     val procesoText = viewHolder.tvProceso.text.toString().trim()
-
-                    // Buscar el índice en la lista de procesos donde la descripción coincida
                     val position = alojamientoActivity?.procesoList?.indexOfFirst {
                         it.descripcionP.trim().equals(procesoText, ignoreCase = true)
                     }
-
-                    // Registrar en Log si se encuentra la posición
                     Log.e("ProcesoP", "Position: $position, ProcesoText: $procesoText")
 
-                    // Si la posición es válida (no es -1), selecciona el elemento en el Spinner
+                    // Selecciona el elemento en el Spinner si se encuentra en la lista
                     if (position != null && position >= 0) {
                         alojamientoActivity.sp_pro.setSelection(position)
                     } else {
                         Log.e("ProcesoP", "No se encontró la descripción del proceso en el Spinner")
                     }
 
-                    // Obtener el texto del proceso desde el TextView
+                    // Obtiene el texto del tipo de habitación y busca el índice en la lista de tipos de habitación
                     val thText = viewHolder.tvTipHabitacion.text.toString().trim()
-
-                    // Buscar el índice en la lista de procesos donde la descripción coincida
                     val positionTH = alojamientoActivity?.tipoHabitacionList?.indexOfFirst {
                         it.descripcionTH.trim().equals(thText, ignoreCase = true)
                     }
-
-                    // Registrar en Log si se encuentra la posición
                     Log.e("ProcesoTH", "Position: $positionTH, THText: $thText")
 
-                    // Si la posición es válida (no es -1), selecciona el elemento en el Spinner
+                    // Selecciona el elemento en el Spinner si se encuentra en la lista
                     if (positionTH != null && positionTH >= 0) {
                         alojamientoActivity.sp_th.setSelection(positionTH)
 
+                        // Obtiene el texto de la habitación y busca el índice en la lista de habitaciones
                         val habitacionText = viewHolder.tvHabitacion.text.toString().trim()
-
                         val positionH = alojamientoActivity?.habitacionList?.indexOfFirst {
                             it.descripcionH.trim().equals(habitacionText, ignoreCase = true)
                         }
-
-                        // Registrar en Log si se encuentra la posición
                         Log.e("ProcesoH", "Position: $positionH, HabitacionText: $habitacionText")
 
-                        // Si la posición es válida (no es -1), selecciona el elemento en el Spinner
+                        // Selecciona el elemento en el Spinner si se encuentra en la lista
                         if (positionH != null && positionH >= 0) {
                             alojamientoActivity.sp_h.setSelection(positionH)
-
-                            // Asignar el ID de AlojamientoCab y registrar en Log
-                            val idAC = alojamiento.idAC // Asumiendo que `alojamiento` es el objeto actual
-                            viewHolder.tvID.text = idAC.toString()
-                            Log.e("ID_AC", "ID de AlojamientoCab: $idAC")
                         } else {
-                            Log.e("ProcesoH", "No se encontró la descripción de la habitacion en el Spinner")
+                            Log.e("ProcesoH", "No se encontró la descripción de la habitación en el Spinner")
                         }
 
                     } else {
@@ -157,17 +159,16 @@ class Adapter_Alojamiento(private val mContext: Context, private val lista: Muta
 
                 }
             } catch (e: Exception) {
+                // Maneja cualquier excepción que pueda ocurrir durante el proceso
                 Log.e("errorTraer", e.message.toString())
             }
         }
 
-
+        // Devuelve la vista configurada para el elemento en la posición actual
         return v
     }
 
-
-
-    // ViewHolder Pattern para mejorar el rendimiento
+    // ViewHolder Pattern para mejorar el rendimiento al evitar llamadas repetidas a findViewById
     private class ViewHolder(
         val id_tp: RelativeLayout,
         val tvID: TextView,
@@ -180,6 +181,4 @@ class Adapter_Alojamiento(private val mContext: Context, private val lista: Muta
         val tvHI: TextView,
         val tvHF: TextView,
     )
-
-
 }
