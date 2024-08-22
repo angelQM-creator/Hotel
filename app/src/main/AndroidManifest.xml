@@ -30,12 +30,6 @@
             android:exported="false"
             android:label="@string/ubicacion"
             android:parentActivityName=".QuienesSomos"/>
-
-        <activity
-            android:name=".Reservacion"
-            android:exported="false"
-            android:label="@string/reservacion"
-            android:parentActivityName=".Oferta" />
         <activity
             android:name=".QuienesSomos"
             android:exported="false"

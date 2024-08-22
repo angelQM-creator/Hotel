@@ -49,18 +49,12 @@ class Oferta : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.alojamiento -> alojamiento()
-            R.id.reservacion -> reservacion()
         }
         return super.onOptionsItemSelected(item)
     }
 
     fun alojamiento() {
         val intento1 = Intent(this, Alojamiento::class.java)
-        startActivity(intento1)
-    }
-
-    fun reservacion() {
-        val intento1 = Intent(this, Reservacion::class.java)
         startActivity(intento1)
     }
 

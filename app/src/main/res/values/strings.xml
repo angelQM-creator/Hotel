@@ -1,7 +1,6 @@
 <resources>
     <string name="app_name">BORCELLE</string>
-    <string name="alojamiento">REGISTRO DE ALOJAMIENTO</string>
-    <string name="reservacion">REGISTRO DE RESERVACION</string>
+    <string name="alojamiento">REGISTRO DE ALOJAMIENTO/RESERVACIÓN</string>
     <string name="oferta">OFERTAS</string>
     <string name="ubicacion">UBICACION DEL HOTEL</string>
     <string name="quienesS">¿QUIENES SOMOS?</string>

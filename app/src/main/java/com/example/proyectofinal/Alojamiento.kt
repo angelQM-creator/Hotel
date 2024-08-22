@@ -46,7 +46,6 @@ import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
 
-
 class Alojamiento : AppCompatActivity() {
 
     private var containerPhotos: LinearLayout? = null
@@ -63,24 +62,27 @@ class Alojamiento : AppCompatActivity() {
     private val listaAlojamientos = mutableListOf<Model_Alojamiento>()
     var gvregistro: GridView? = null
 
+    val listaTridimensional = ArrayList<ArrayList<ArrayList<DetInfo>>>()
+
+
     /*********************************************/
 
     lateinit var sp_pro: Spinner
-    private lateinit var procesoList: List<Proceso>
+    lateinit var procesoList: List<Proceso>
     var id_pro: String = ""
     var id_pro_descripcion: String = ""
 
     lateinit var sp_th: Spinner
-    private lateinit var tipoHabitacionList: List<TipoHabitacion>
+    lateinit var tipoHabitacionList: List<TipoHabitacion>
     var id_th: String = ""
     var id_th_descripcion: String = ""
 
     lateinit var sp_h: Spinner
-    private lateinit var habitacionList: List<Habitacion>
+    lateinit var habitacionList: List<Habitacion>
     var id_h: String = ""
     var id_h_descripcion: String = ""
 
-    private lateinit var habitacion_PrecioList: List<Habitacion_precio>
+    lateinit var habitacion_PrecioList: List<Habitacion_precio>
     var idHP: String = ""
     var idHP_descripcion: String = ""
     /*********************************************/
@@ -93,6 +95,7 @@ class Alojamiento : AppCompatActivity() {
     lateinit var tv_nombre_app: TextView
     lateinit var tv_apellido_app: TextView
     lateinit var edt_dni_app: EditText
+    lateinit var tv_dni_antig: TextView
     /*********************************************/
 
     @SuppressLint("MissingInflatedId")
@@ -166,14 +169,12 @@ class Alojamiento : AppCompatActivity() {
         cargar_list_pro();
         cargar_list_th();
     }
-        // AGREGAR N CANTIDAD DE ITEMS DE DNI PARA CONSULTAR
-            // BEGIN
+    // AGREGAR N CANTIDAD DE ITEMS DE DNI PARA CONSULTAR
+    // BEGIN
     private fun agregarInquilinos(n: Int) {
         val inflater = LayoutInflater.from(this)
 
         containerPhotos?.removeAllViews()
-        // containerPhotos_durante.removeAllViews()
-        // containerPhotos_despues.removeAllViews()
 
         for (i in 0 until n) {
             val view = inflater.inflate(R.layout.item_dni, containerPhotos, false)
@@ -181,19 +182,21 @@ class Alojamiento : AppCompatActivity() {
             val edt_dni: EditText = view.findViewById(R.id.Edt_dni)
             val tv_nombre: TextView = view.findViewById(R.id.tv_nombre_)
             val tv_apellido: TextView = view.findViewById(R.id.tv_apellidos_)
+            val tv_dni: TextView = view.findViewById(R.id.tv_dni_)
 
             btnSelect.setOnClickListener {
                 // AQUI USAMOS EL EVENTO ONCLICK PARA CONSULTAR EL DNI MEDIANTE SUS EDITTET ENVIAR LA DATA (DNI) Y PROCESARLA
                 tv_nombre_app = tv_nombre
                 tv_apellido_app  = tv_apellido
                 edt_dni_app = edt_dni
+                tv_dni_antig = tv_dni
                 // FUNCIÓN DE CONSULTA DE DNI
                 Consultar_Dni()
             }
             containerPhotos?.addView(view)
         }
     }
-            // END
+    // END
     private fun gettime(editText: EditText) {
         editText.setOnClickListener { TimeSetter(editText) }
     }
@@ -621,6 +624,9 @@ class Alojamiento : AppCompatActivity() {
                 params["horaInicio"] = etHI.text.toString()
                 params["fechaFin"] = etFF.text.toString()
                 params["horaFin"] = etHF.text.toString()
+                val gson = Gson()
+                val json = gson.toJson(listaTridimensional)
+                params["det_list"] = json
 
                 Log.d("insertarAlojamientoCab", "Params: $params")
                 return params
@@ -643,6 +649,7 @@ class Alojamiento : AppCompatActivity() {
                     listaAlojamientos.clear()
                     for (i in 0 until jsonArray.length()) {
                         val jsonObject = jsonArray.getJSONObject(i)
+                        val idAC = jsonObject.getString("idAC")
                         val descripcionTH = jsonObject.getString("descripcionTH")
                         val descripcionH = jsonObject.getString("descripcionH")
                         val descripcionP = jsonObject.getString("descripcionP")
@@ -655,7 +662,7 @@ class Alojamiento : AppCompatActivity() {
                         // Aquí debes asegurarte de proporcionar todos los parámetros al crear Model_Alojamiento
                         val nuevoAlojamiento = Model_Alojamiento(
                             countID = i, // Puedes usar el índice del bucle como countID si no tienes otro valor
-                            idAC = "",
+                            idAC = idAC,
                             idTH_descripcion = descripcionTH,
                             idH_descripcion = descripcionH,
                             idP_descripcion = descripcionP,
@@ -695,7 +702,7 @@ class Alojamiento : AppCompatActivity() {
     }
 
 
-// PROCESO DE CONSULTA DE DNI
+    // PROCESO DE CONSULTA DE DNI
     //  BEGIN
     fun Consultar_Dni() {
         when {
@@ -720,13 +727,17 @@ class Alojamiento : AppCompatActivity() {
                         val apiResponse = parseJsonResponse(response)
                         tv_nombre_app.setText(apiResponse.data.nombres)
                         tv_apellido_app.setText(apiResponse.data.apellido_paterno + " " + apiResponse.data.apellido_materno)
+                        if (tv_dni_antig.text.toString() == ""){
+                            tv_dni_antig.setText(edt_dni_app.text.toString())
+                        }
                         // array list
-                        // miarray(tv_nombre.gettext, tv_apellid.gettext, tv_dni.gett, tv_dni_antig)
-                        // tv_nombre.gettext, tv_apellid.gettext, tv_dni.gett
-                       //Toast.makeText( applicationContext,"Nombre completo: ${apiResponse.data.nombres}",Toast.LENGTH_SHORT).show()
-//                        else {
-////                            Toast.makeText(this@Logeo, response, Toast.LENGTH_SHORT).show()
-////                        }
+                        try{
+                            agregarAlArray(tv_nombre_app, tv_apellido_app, edt_dni_app, tv_dni_antig)
+                        }catch (e: Exception){
+                            Log.e("error_Array", e.message.toString())
+                        }
+
+
                     },
                     Response.ErrorListener { error ->
                         progressDialog.dismiss()
@@ -747,21 +758,21 @@ class Alojamiento : AppCompatActivity() {
             }
         }
     }
-        // FUNCIÓN DE PARSEO DE DATA DE DNI
+    // FUNCIÓN DE PARSEO DE DATA DE DNI
     fun parseJsonResponse(jsonResponse: String): ApiResponse {
         val gson = Gson()
         return gson.fromJson(jsonResponse, ApiResponse::class.java)
     }
 
-        // CREAMOS LA CLASE DE API RESPONSE PARA VALIDAR EL JSON
+    // CREAMOS LA CLASE DE API RESPONSE PARA VALIDAR EL JSON
     data class ApiResponse(
         val success: Boolean,
         val data: UserData,
         val time: Double,
         val source: String
     )
-       /*  CREAMOS NUESTRA CLASE UserData (MODELO) PARA QUE LOS DATOS DEL JSON SEAN TOMANDOS EN UN LIST TIPO CLASE Y COMO SE PUEDE VER
-         SE TIENE LOS CAMPOS, NOMBRES, AP PATERNO, AP MATERNO */
+    /*  CREAMOS NUESTRA CLASE UserData (MODELO) PARA QUE LOS DATOS DEL JSON SEAN TOMANDOS EN UN LIST TIPO CLASE Y COMO SE PUEDE VER
+      SE TIENE LOS CAMPOS, NOMBRES, AP PATERNO, AP MATERNO */
     data class UserData(
         val numero: String,
         val nombre_completo: String,
@@ -776,91 +787,79 @@ class Alojamiento : AppCompatActivity() {
 
     // END
 
-    /*
-    fun agregar_al_array(
-        Textview_name: TextView,
-        Textview_ruta: TextView,
-        name_anterior: TextView,
-        proceso: Int?
-    ) {
-        // REEMPLAZAR
-        var pk1: String? = ""
-        try {
-            pk1 = BASESTRING(Textview_ruta.text.toString(), this@externas_inspecciones)
-        } catch (ex: java.lang.Exception) {
-            println("error " + ex.message)
-        }
+    data class DetInfo(
+        var dni: String,
+        var nombre: String,
+        var apellido: String
+    )
 
-        if (!name_anterior.text.toString().isEmpty()) // si no está vacío
-        {
-            if (name_anterior.text.toString() !== Textview_name.text.toString()) {
-                // Supongamos que quieres reemplazar la imagen llamada "imagen1.jpg"
-                val nombreImagenBuscada = name_anterior.text.toString()
-                var nuevaInfo: ImagenInfo? = null
-                when (proceso) {
-                    1 -> nuevaInfo = ImagenInfo(Textview_name.text.toString(), "ANTES", pk1)
-                    2 -> nuevaInfo = ImagenInfo(Textview_name.text.toString(), "DURANTE", pk1)
-                    3 -> nuevaInfo = ImagenInfo(Textview_name.text.toString(), "DESPUES", pk1)
-                }
-                for (lista2D in listaTridimensional) {
-                    for (lista1D in lista2D) {
-                        for (k in lista1D.indices) {
-                            val info: ImagenInfo = lista1D[k]
-                            if (info.getImagen().equals(nombreImagenBuscada)) {
-                                // Reemplaza el dato
-                                lista1D[k] = nuevaInfo
-                                break // Si solo deseas reemplazar la primera coincidencia
-                            }
+
+
+    fun agregarAlArray(
+        textViewName: TextView,
+        textViewApellido: TextView,
+        edtDni: EditText,
+        tvDniAnterior: TextView?
+    ) {
+        val dniAnterior = tvDniAnterior?.text.toString()
+        val dniNuevo = edtDni.text.toString()
+        Log.e("datoingreso", dniAnterior + " " + dniNuevo )
+        var encontrado = false
+
+        if (dniAnterior.isNotEmpty() && dniAnterior != dniNuevo) {
+            val nuevaInfo = DetInfo(dniNuevo, textViewName.text.toString(), textViewApellido.text.toString())
+
+            // Buscar y reemplazar en la lista tridimensional
+            for (lista2D in listaTridimensional) {
+                for (lista1D in lista2D) {
+                    for (i in lista1D.indices) {
+                        if (lista1D[i].dni == dniAnterior) {
+                            // Reemplazar el dato
+                            lista1D[i] = nuevaInfo
+                            encontrado = true
                         }
                     }
                 }
-                when (proceso) {
-                    1 -> name_foto_anterior.setText(name_foto.getText().toString())
-                    2 -> name_foto_anterior_durante.setText(name_foto_durante.getText().toString())
-                    3 -> name_foto_anterior_despues.setText(name_foto_despues.getText().toString())
-                }
-            } else {
-                var info1: ImagenInfo? = null
-                when (proceso) {
-                    1 -> info1 = ImagenInfo(Textview_name.text.toString(), "ANTES", pk1)
-                    2 -> info1 = ImagenInfo(Textview_name.text.toString(), "DURANTE", pk1)
-                    3 -> info1 = ImagenInfo(Textview_name.text.toString(), "DESPUES", pk1)
-                }
-                // Primera dimensión
-                val lista1: ArrayList<ImagenInfo?> = ArrayList<ImagenInfo?>()
-                lista1.add(info1)
-                // Segunda dimensión
-                val lista2D: ArrayList<ArrayList<ImagenInfo?>> = ArrayList<ArrayList<ImagenInfo?>>()
-                lista2D.add(lista1)
-                // Añadir a la tercera dimensión
+            }
+
+            if (!encontrado) {
+                Log.e("error_reemplazo", "No se encontró ningún dato con DNI $dniAnterior para reemplazar.")
+            }
+        } else {
+            try {
+                val nuevaInfo = DetInfo(dniNuevo, textViewName.text.toString(), textViewApellido.text.toString())
+
+                // Crear la nueva estructura
+                val lista1D = ArrayList<DetInfo>()
+                lista1D.add(nuevaInfo)
+
+                val lista2D = ArrayList<ArrayList<DetInfo>>()
+                lista2D.add(lista1D)
+
                 listaTridimensional.add(lista2D)
+
+                Log.e("lista_tridimensional", listaTridimensional.size.toString())
+            } catch (e: Exception) {
+                Log.e("error_array_2", e.message.toString())
             }
         }
 
+        // Mostrar el contenido de la lista tridimensional
         try {
-            var lista2D: ArrayList<ArrayList<ImagenInfo>>
-            // Iterar sobre la lista tridimensional
-            for (i in 0 until listaTridimensional.size()) {
-                lista2D = listaTridimensional.get(i)
-
-                for (j in lista2D.indices) {
-                    val lista1D: ArrayList<ImagenInfo> = lista2D[j]
-
-                    for (k in lista1D.indices) {
-                        val info: ImagenInfo = lista1D[k]
-
+            for (lista2D in listaTridimensional) {
+                for (lista1D in lista2D) {
+                    for (info in lista1D) {
                         // Acceder a los datos
-                        System.out.println("Imagen: " + info.getImagen())
-                        System.out.println("Tipo: " + info.getTipo())
-                        // System.out.println("Byte de Imagen: " + info.getByteDeImagen());
+                        Log.e("dato_array", "Nombre: ${info.nombre}, Apellido: ${info.apellido}, DNI: ${info.dni}")
                     }
                 }
             }
-        } catch (ex: java.lang.Exception) {
-            println("error")
+        } catch (ex: Exception) {
+            Log.e("error_array", ex.message.toString())
         }
     }
-    */
+
+
 
 
 }

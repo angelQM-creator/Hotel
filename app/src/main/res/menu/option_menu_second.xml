@@ -11,13 +11,7 @@
             <item
                 android:id="@+id/alojamiento"
                 android:icon="@drawable/baseline_hotel_24"
-                android:title="ALOJAMIENTO"
-                app:showAsAction="never" />
-
-            <item
-                android:id="@+id/reservacion"
-                android:icon="@drawable/baseline_hotel_24"
-                android:title="RESERVACION"
+                android:title="ALOJAMIENTO/RESERVACIÓN"
                 app:showAsAction="never" />
         </menu>
     </item>
